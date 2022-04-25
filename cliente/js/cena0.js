@@ -17,6 +17,7 @@ cena0.create = function () {
   button.on(
     "pointerdown",
     function () {
+      this.scale.startFullscreen();
       this.scene.start(cena1);
     },
     this

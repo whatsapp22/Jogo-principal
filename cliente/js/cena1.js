@@ -42,8 +42,8 @@ cena1.preload = function () {
 
   // Jogador 1
   this.load.spritesheet("player1", "assets/player1.png", {
-    frameWidth: 16,
-    frameHeight: 16,
+    frameWidth: 60,
+    frameHeight: 60,
   });
 
   // Jogador 2
@@ -112,7 +112,7 @@ cena1.create = function () {
   this.anims.create({
     key: "left1",
     frames: this.anims.generateFrameNumbers("player1", {
-      start: 0,
+      start: 4,
       end: 6,
     }),
     frameRate: 10,
@@ -134,8 +134,30 @@ cena1.create = function () {
   this.anims.create({
     key: "right1",
     frames: this.anims.generateFrameNumbers("player1", {
-      start: 15,
-      end: 21,
+      start: 7,
+      end: 9,
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
+
+  // Animação do player 1 pra baixo
+  this.anims.create({
+    key: "descendo1",
+    frames: this.anims.generateFrameNumbers("player1", {
+      start: 1,
+      end: 3,
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
+
+  // Animação do player 1 pra cima
+  this.anims.create({
+    key: "subindo1",
+    frames: this.anims.generateFrameNumbers("player1", {
+      start: 10,
+      end: 12,
     }),
     frameRate: 10,
     repeat: -1,
@@ -156,8 +178,8 @@ cena1.create = function () {
   this.anims.create({
     key: "stopped1",
     frames: this.anims.generateFrameNumbers("player1", {
-      start: 11,
-      end: 14,
+      start: 0,
+      end: 0,
     }),
     frameRate: 5,
     repeat: -1,
@@ -317,7 +339,7 @@ cena1.create = function () {
         if (timer > 0) {
           cima.setFrame(1);
           player1.setVelocityY(-160);
-          player1.anims.play("right1", true);
+          player1.anims.play("subindo1", true);
         }
       });
       cima.on("pointerout", () => {
@@ -331,7 +353,7 @@ cena1.create = function () {
         if (timer > 0) {
           baixo.setFrame(1);
           player1.setVelocityY(160);
-          player1.anims.play("right1", true);
+          player1.anims.play("descendo1", true);
         }
       });
       baixo.on("pointerout", () => {
