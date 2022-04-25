@@ -48,8 +48,8 @@ cena1.preload = function () {
 
   // Jogador 2
   this.load.spritesheet("player2", "assets/player2.png", {
-    frameWidth: 16,
-    frameHeight: 16,
+    frameWidth: 60,
+    frameHeight: 60,
   });
 
   // Trilha sonora
@@ -123,7 +123,7 @@ cena1.create = function () {
   this.anims.create({
     key: "left2",
     frames: this.anims.generateFrameNumbers("player2", {
-      start: 0,
+      start: 4,
       end: 6,
     }),
     frameRate: 10,
@@ -163,12 +163,34 @@ cena1.create = function () {
     repeat: -1,
   });
 
+  // Animação do player 2 pra baixo
+  this.anims.create({
+    key: "descendo2",
+    frames: this.anims.generateFrameNumbers("player2", {
+      start: 1,
+      end: 3,
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
+
+  // Animação do player 2 pra cima
+  this.anims.create({
+    key: "subindo2",
+    frames: this.anims.generateFrameNumbers("player2", {
+      start: 10,
+      end: 12,
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
+
   // Animação do jogador 2: a direita
   this.anims.create({
     key: "right2",
     frames: this.anims.generateFrameNumbers("player2", {
-      start: 15,
-      end: 21,
+      start: 7,
+      end: 9,
     }),
     frameRate: 10,
     repeat: -1,
@@ -189,8 +211,8 @@ cena1.create = function () {
   this.anims.create({
     key: "stopped2",
     frames: this.anims.generateFrameNumbers("player2", {
-      start: 11,
-      end: 14,
+      start: 0,
+      end: 0,
     }),
     frameRate: 5,
     repeat: -1,
@@ -421,7 +443,7 @@ cena1.create = function () {
         if (timer > 0) {
           cima.setFrame(1);
           player2.setVelocityY(-160);
-          player2.anims.play("right2", true);
+          player2.anims.play("subindo2", true);
         }
       });
       cima.on("pointerout", () => {
@@ -435,7 +457,7 @@ cena1.create = function () {
         if (timer > 0) {
           baixo.setFrame(1);
           player2.setVelocityY(160);
-          player2.anims.play("right2", true);
+          player2.anims.play("descendo2", true);
         }
       });
       baixo.on("pointerout", () => {
