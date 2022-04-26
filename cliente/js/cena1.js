@@ -61,8 +61,8 @@ cena1.preload = function () {
 
   // Tela cheia
   this.load.spritesheet("fullscreen", "assets/fullscreen.png", {
-    frameWidth: 64,
-    frameHeight: 64,
+    frameWidth: 32,
+    frameHeight: 32,
   });
 
   // D-pad
@@ -245,7 +245,7 @@ cena1.create = function () {
 
   // Botão de ativar/desativar tela cheia
   var button = this.add
-    .image(800 - 16, 16, "fullscreen", 0)
+    .image(640 - 16, 16, "fullscreen", 0)
     .setOrigin(1, 0)
     .setInteractive()
     .setScrollFactor(0);
@@ -283,19 +283,19 @@ cena1.create = function () {
 
   // D-pad
   var esquerda = this.add
-    .image(50, 550, "esquerda", 0)
+    .image(50, 330, "esquerda", 0)
     .setInteractive()
     .setScrollFactor(0);
   var direita = this.add
-    .image(125, 550, "direita", 0)
+    .image(125, 330, "direita", 0)
     .setInteractive()
     .setScrollFactor(0);
   var cima = this.add
-    .image(750, 475, "cima", 0)
+    .image(610, 260, "cima", 0)
     .setInteractive()
     .setScrollFactor(0);
   var baixo = this.add
-    .image(750, 550, "baixo", 0)
+    .image(610, 330, "baixo", 0)
     .setInteractive()
     .setScrollFactor(0);
 
