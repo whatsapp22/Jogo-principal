@@ -40,11 +40,14 @@ cena1.preload = function () {
   // Tilemap
   this.load.tilemapTiledJSON("map", "assets/cena1.json");
 
+
   // Jogador 1
   this.load.spritesheet("player1", "assets/player1.png", {
     frameWidth: 60,
     frameHeight: 60,
   });
+
+
 
   // Jogador 2
   this.load.spritesheet("player2", "assets/player2.png", {
@@ -89,6 +92,7 @@ cena1.create = function () {
   trilha = this.sound.add("trilha");
   trilha.play();
 
+
   // Efeitos sonoros
   parede = this.sound.add("parede");
   voz = this.sound.add("voz");
@@ -107,6 +111,9 @@ cena1.create = function () {
   // Personagens
   player1 = this.physics.add.sprite(400, 300, "player1");
   player2 = this.physics.add.sprite(300, 400, "player2");
+
+  player1.setSize(25, 35, true);
+  player2.setSize(25, 35, true);
 
   // Animação do jogador 1: a esquerda
   this.anims.create({
@@ -283,19 +290,19 @@ cena1.create = function () {
 
   // D-pad
   var esquerda = this.add
-    .image(50, 330, "esquerda", 0)
+    .image(490, 275, "esquerda", 0)
     .setInteractive()
     .setScrollFactor(0);
   var direita = this.add
-    .image(125, 330, "direita", 0)
+    .image(590, 275, "direita", 0)
     .setInteractive()
     .setScrollFactor(0);
   var cima = this.add
-    .image(610, 260, "cima", 0)
+    .image(540, 230, "cima", 0)
     .setInteractive()
     .setScrollFactor(0);
   var baixo = this.add
-    .image(610, 330, "baixo", 0)
+    .image(540, 320, "baixo", 0)
     .setInteractive()
     .setScrollFactor(0);
 
