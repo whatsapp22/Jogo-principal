@@ -327,6 +327,9 @@ cena1.create = function () {
       // Detecção de colisão: terreno
       physics.add.collider(player1, terreno, hitCave, null, this);
 
+
+      physics.add.collider(player1, player2, baterEspadas, null, this);
+
       // Detecção de colisão e disparo de evento: ARCas
       physics.add.collider(player1, ARCas, hitARCa, null, this);
 
@@ -618,6 +621,11 @@ function countdown() {
   timer -= 1;
   timerText.setText(timer);
 }
+
+function baterEspadas() {
+  parede.play()
+}
+
 
 // Exportar a cena
 export { cena1 };
