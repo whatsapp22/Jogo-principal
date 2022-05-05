@@ -12,7 +12,9 @@ var tileset1;
 var ARCas;
 var player1;
 var player2;
+var bot1;
 var parede;
+var texto;
 var voz;
 var pointer;
 var touchX;
@@ -40,14 +42,11 @@ cena1.preload = function () {
   // Tilemap
   this.load.tilemapTiledJSON("map", "assets/cena1.json");
 
-
   // Jogador 1
   this.load.spritesheet("player1", "assets/player1.png", {
     frameWidth: 60,
     frameHeight: 60,
   });
-
-
 
   // Jogador 2
   this.load.spritesheet("player2", "assets/player2.png", {
@@ -55,12 +54,19 @@ cena1.preload = function () {
     frameHeight: 60,
   });
 
+  this.load.spritesheet("bot1", "assets/bot1.png", {
+    frameWidth: 60,
+    frameHeight: 60,
+  });
   // Trilha sonora
   this.load.audio("trilha", "assets/cena1.mp3");
 
   // Efeitos sonoros
   this.load.audio("parede", "assets/parede.mp3");
   this.load.audio("voz", "assets/voz.mp3");
+
+
+  this.load.image("texto", "assets/texto.png")
 
   // Tela cheia
   this.load.spritesheet("fullscreen", "assets/fullscreen.png", {
@@ -92,7 +98,6 @@ cena1.create = function () {
   trilha = this.sound.add("trilha");
   trilha.play();
 
-
   // Efeitos sonoros
   parede = this.sound.add("parede");
   voz = this.sound.add("voz");
@@ -111,9 +116,11 @@ cena1.create = function () {
   // Personagens
   player1 = this.physics.add.sprite(400, 300, "player1");
   player2 = this.physics.add.sprite(300, 400, "player2");
+  bot1 = this.physics.add.sprite(350, 50, "bot1");
 
   player1.setSize(25, 35, true);
   player2.setSize(25, 35, true);
+  bot1.setSize(35, 45, true);
 
   // Animação do jogador 1: a esquerda
   this.anims.create({
@@ -202,6 +209,19 @@ cena1.create = function () {
     frameRate: 10,
     repeat: -1,
   });
+
+  //Animação do bot respirando
+  this.anims.create({
+    key: "random",
+    frames: this.anims.generateFrameNumbers("bot1", {
+      start: 0,
+      end: 1,
+    }),
+    frameRate: 2,
+    repeat: -1,
+  });
+  bot1.anims.play("random", true);
+  bot1.body.immovable = true;
 
   // Animação do jogador 1: ficar parado (e virado para a direita)
   this.anims.create({
@@ -327,8 +347,9 @@ cena1.create = function () {
       // Detecção de colisão: terreno
       physics.add.collider(player1, terreno, hitCave, null, this);
 
-
       physics.add.collider(player1, player2, baterEspadas, null, this);
+
+      physics.add.collider(player1, bot1, hitARCa, null, this);
 
       // Detecção de colisão e disparo de evento: ARCas
       physics.add.collider(player1, ARCas, hitARCa, null, this);
@@ -414,6 +435,8 @@ cena1.create = function () {
 
       // Detecção de colisão e disparo de evento: ARCas
       physics.add.collider(player2, ARCas, hitARCa, null, this);
+
+      physics.add.collider(player2, bot1, hitARCa, null, this);
 
       // Câmera seguindo o personagem 2
       cameras.main.startFollow(player2);
@@ -612,6 +635,9 @@ function hitARCa(player, ARCas) {
   parede.play();
 }
 
+function conversa(player, bot1) {
+}
+
 function countdown() {
   // Adiciona o tempo de vida em 1 segundo
   life += 1;
@@ -623,9 +649,8 @@ function countdown() {
 }
 
 function baterEspadas() {
-  parede.play()
+  parede.play();
 }
-
 
 // Exportar a cena
 export { cena1 };
