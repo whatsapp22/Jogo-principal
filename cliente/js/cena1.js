@@ -436,7 +436,7 @@ cena1.create = function () {
       // Detecção de colisão e disparo de evento: ARCas
       physics.add.collider(player2, ARCas, hitARCa, null, this);
 
-      physics.add.collider(player2, bot1, hitARCa, null, this);
+      physics.add.collider(player2, bot1, conversa, null, this);
 
       // Câmera seguindo o personagem 2
       cameras.main.startFollow(player2);
@@ -636,6 +636,7 @@ function hitARCa(player, ARCas) {
 }
 
 function conversa(player, bot1) {
+  this.add.text(120,80, "Parabens voce é gay")
 }
 
 function countdown() {
