@@ -5,7 +5,7 @@ var fase3 = new Phaser.Scene("Fase 3");
 var config = {
   type: Phaser.AUTO,
   width: 640,
-  height: 480,
+  height: 360,
   physics: {
     default: "arcade",
     arcade: {
