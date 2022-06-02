@@ -1,15 +1,15 @@
 // Importar a próxima cena
-import { cena1 } from "./cena1.js";
+import { fase1 } from "./fase1.js";
 
 // Criar a cena 0
-var cena0 = new Phaser.Scene("Cena 0");
+var inicio = new Phaser.Scene("inicio");
 
-cena0.preload = function () {
+inicio.preload = function () {
   // Imagem de fundo
   this.load.image("cadeado", "assets/cena0.png");
 };
 
-cena0.create = function () {
+inicio.create = function () {
   // Botão com a imagem de fundo
   var button = this.add.image(320, 180, "cadeado", 0).setInteractive();
 
@@ -18,13 +18,13 @@ cena0.create = function () {
     "pointerdown",
     function () {
       this.scale.startFullscreen();
-      this.scene.start(cena1);
+      this.scene.start(fase1);
     },
     this
   );
 };
 
-cena0.update = function () {};
+inicio.update = function () {};
 
 // Exportar a cena
-export { cena0 };
+export { inicio };

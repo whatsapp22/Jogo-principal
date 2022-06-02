@@ -1,8 +1,8 @@
 // Importar a próxima cena
-import { cena2 } from "./cena2.js";
+import { fase2 } from "./fase2.js";
 
 // Criar a cena 1
-var cena1 = new Phaser.Scene("Cena 1");
+var fase1 = new Phaser.Scene("Fase 1");
 
 // Variáveis locais
 var map;
@@ -34,7 +34,7 @@ var remoteConnection;
 var midias;
 const audio = document.querySelector("audio");
 
-cena1.preload = function () {
+fase1.preload = function () {
   // Tilesets
   this.load.image("terreno", "assets/terreno.png");
   this.load.image("ARCas", "assets/ARCas.png");
@@ -93,7 +93,7 @@ cena1.preload = function () {
   });
 };
 
-cena1.create = function () {
+fase1.create = function () {
   // Trilha sonora
   trilha = this.sound.add("trilha");
   trilha.play();
@@ -587,7 +587,7 @@ cena1.create = function () {
     }
   });
 };
-cena1.update = function (time, delta) {
+fase1.update = function (time, delta) {
   let frame;
   // Controle do personagem por direcionais
   if (jogador === 1) {
@@ -621,7 +621,7 @@ cena1.update = function (time, delta) {
   // Se o contador chegar a zero, inicia a cena 2
   if (timer === 0) {
     trilha.stop();
-    this.scene.start(cena2);
+    this.scene.start(fase2);
   }
 };
 
@@ -654,4 +654,4 @@ function baterEspadas() {
 }
 
 // Exportar a cena
-export { cena1 };
+export { fase1 };
