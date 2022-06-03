@@ -1,5 +1,3 @@
-tasks:
-  - init: npm install
 image:
   file: .gitpod.Dockerfile
 ports:
