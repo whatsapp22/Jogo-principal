@@ -327,7 +327,7 @@ cena1.create = function () {
     .setScrollFactor(0);
 
   // Conectar no servidor via WebSocket
-  this.socket = io();
+  this.socket = io(mysterious-harbor-45862.herokuapp.com/);
 
   // Disparar evento quando jogador entrar na partida
   var self = this;
