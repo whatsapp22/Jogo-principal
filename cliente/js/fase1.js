@@ -122,6 +122,9 @@ fase1.create = function () {
   player2.setSize(25, 35, true);
   bot1.setSize(35, 45, true);
 
+  player1.body.immovable = true;
+  player2.body.immovable = true;
+
   // Animação do jogador 1: a esquerda
   this.anims.create({
     key: "left1",
@@ -436,7 +439,7 @@ fase1.create = function () {
       // Detecção de colisão e disparo de evento: ARCas
       physics.add.collider(player2, ARCas, hitARCa, null, this);
 
-      physics.add.collider(player2, bot1, conversa, null, this);
+      physics.add.collider(player2, bot1, hitARCa, null, this);
 
       // Câmera seguindo o personagem 2
       cameras.main.startFollow(player2);

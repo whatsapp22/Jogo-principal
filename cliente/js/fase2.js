@@ -1,8 +1,6 @@
 import { fase3 } from "./fase3.js";
 
-
 var fase2 = new Phaser.Scene("Fase 2");
-
 
 var button;
 
@@ -75,7 +73,5 @@ fase2.create = function () {
   );
 };
 
-fase2.update = function () {
-
-}
+fase2.update = function () {};
 export { fase2 };

@@ -1,4 +1,4 @@
-const express = require("express");
+import express, { static } from "express";
 const app = express();
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
@@ -50,5 +50,5 @@ io.on("connection", function (socket) {
   });
 });
 
-app.use(express.static("../cliente"));
+app.use(static("../cliente"));
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));
