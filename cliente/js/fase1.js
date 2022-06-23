@@ -639,7 +639,7 @@ function hitARCa(player, ARCas) {
 }
 
 function conversa(player, bot1) {
-  this.add.text(120,80, "Parabens voce é gay")
+  this.add.text(120,80, "Que bom ver voce aqui! Boa sorte com as proximas fases.")
 }
 
 function countdown() {
