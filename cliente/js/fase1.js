@@ -66,8 +66,6 @@ fase1.preload = function () {
   this.load.audio("voz", "assets/voz.mp3");
 
 
-  this.load.image("texto", "assets/texto.png")
-
   // Tela cheia
   this.load.spritesheet("fullscreen", "assets/fullscreen.png", {
     frameWidth: 32,
@@ -91,6 +89,7 @@ fase1.preload = function () {
     frameWidth: 64,
     frameHeight: 64,
   });
+  texto = this.add.text(120, 80, "Parabéns você é gay").setVisible(false);
 };
 
 fase1.create = function () {
@@ -353,6 +352,7 @@ fase1.create = function () {
       physics.add.collider(player1, player2, baterEspadas, null, this);
 
       physics.add.collider(player1, bot1, hitARCa, null, this);
+      physics.add.collider(player1, bot1, texto, null, this);
 
       // Detecção de colisão e disparo de evento: ARCas
       physics.add.collider(player1, ARCas, hitARCa, null, this);
@@ -638,9 +638,10 @@ function hitARCa(player, ARCas) {
   parede.play();
 }
 
-function conversa(player, bot1) {
-  this.add.text(120,80, "Que bom ver voce aqui! Boa sorte com as proximas fases.")
-}
+if
+
+    texto = this.add.text(120, 80, "Parabéns você é gay").setVisible(true);
+
 
 function countdown() {
   // Adiciona o tempo de vida em 1 segundo
