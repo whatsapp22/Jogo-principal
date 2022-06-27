@@ -14,7 +14,6 @@ var player1;
 var player2;
 var bot1;
 var parede;
-var texto;
 var voz;
 var pointer;
 var touchX;
@@ -26,6 +25,7 @@ var life = 0;
 var lifeText;
 var trilha;
 var jogador;
+var corneta;
 var ice_servers = {
   iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
 };
@@ -64,6 +64,7 @@ fase1.preload = function () {
   // Efeitos sonoros
   this.load.audio("parede", "assets/parede.mp3");
   this.load.audio("voz", "assets/voz.mp3");
+  this.load.audio("corneta", "assets/corneta.mp3");
 
 
   // Tela cheia
@@ -71,6 +72,13 @@ fase1.preload = function () {
     frameWidth: 32,
     frameHeight: 32,
   });
+
+  this.add.text(120, 80, "Parabéns você é gay").setVisible(false);
+  timerText = this.add.text(16, 16, timer, {
+    fontSize: "32px",
+    fill: "#000000",
+  });
+
 
   // D-pad
   this.load.spritesheet("esquerda", "assets/esquerda.png", {
@@ -89,7 +97,6 @@ fase1.preload = function () {
     frameWidth: 64,
     frameHeight: 64,
   });
-  texto = this.add.text(120, 80, "Parabéns você é gay").setVisible(false);
 };
 
 fase1.create = function () {
@@ -100,6 +107,7 @@ fase1.create = function () {
   // Efeitos sonoros
   parede = this.sound.add("parede");
   voz = this.sound.add("voz");
+  corneta = this.sound.add("corneta");
 
   // Tilemap
   map = this.make.tilemap({ key: "map" });
@@ -351,8 +359,9 @@ fase1.create = function () {
 
       physics.add.collider(player1, player2, baterEspadas, null, this);
 
-      physics.add.collider(player1, bot1, hitARCa, null, this);
-      physics.add.collider(player1, bot1, texto, null, this);
+      physics.add.collider(player1, bot1, colbot1, null, this);
+
+
 
       // Detecção de colisão e disparo de evento: ARCas
       physics.add.collider(player1, ARCas, hitARCa, null, this);
@@ -439,7 +448,7 @@ fase1.create = function () {
       // Detecção de colisão e disparo de evento: ARCas
       physics.add.collider(player2, ARCas, hitARCa, null, this);
 
-      physics.add.collider(player2, bot1, hitARCa, null, this);
+      physics.add.collider(player2, bot1, colbot1, null, this);
 
       // Câmera seguindo o personagem 2
       cameras.main.startFollow(player2);
@@ -638,9 +647,10 @@ function hitARCa(player, ARCas) {
   parede.play();
 }
 
-if
+function colbot1(player, bot1) {
+  corneta.play();
+}
 
-    texto = this.add.text(120, 80, "Parabéns você é gay").setVisible(true);
 
 
 function countdown() {
