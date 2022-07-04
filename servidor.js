@@ -50,5 +50,5 @@ io.on("connection", function (socket) {
   });
 });
 
-app.use(express.static("../cliente"));
+app.use(express.static("./"));
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));

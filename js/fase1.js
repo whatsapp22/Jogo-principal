@@ -1,7 +1,10 @@
-import { fim } from "./fim.js";
+// Importar a próxima cena
+import { fase2 } from "./fase2.js";
 
-var fase2 = new Phaser.Scene("Fase 2");
+// Criar a cena 1
+var fase1 = new Phaser.Scene("Fase 1");
 
+// Variáveis locais
 var map;
 var tileset0;
 var terreno;
@@ -11,6 +14,7 @@ var player1;
 var player2;
 var bot1;
 var parede;
+var texto;
 var voz;
 var pointer;
 var touchX;
@@ -22,7 +26,7 @@ var life = 0;
 var lifeText;
 var trilha;
 var jogador;
-var corneta;
+var socket
 var ice_servers = {
   iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
 };
@@ -31,9 +35,13 @@ var remoteConnection;
 var midias;
 const audio = document.querySelector("audio");
 
-fase2.preload = function () {
+fase1.preload = function () {
   // Tilesets
-  this.load.image("Quadra", "assets/Quadra.png");
+  this.load.image("terreno", "assets/terreno.png");
+  this.load.image("ARCas", "assets/ARCas.png");
+
+  // Tilemap
+  this.load.tilemapTiledJSON("map", "assets/cena1.json");
 
   // Jogador 1
   this.load.spritesheet("player1", "assets/player1.png", {
@@ -51,14 +59,13 @@ fase2.preload = function () {
     frameWidth: 60,
     frameHeight: 60,
   });
-
   // Trilha sonora
   this.load.audio("trilha", "assets/cena1.mp3");
-  this.load.audio("corneta", "assets/corneta.mp3");
 
   // Efeitos sonoros
   this.load.audio("parede", "assets/parede.mp3");
   this.load.audio("voz", "assets/voz.mp3");
+
 
   // Tela cheia
   this.load.spritesheet("fullscreen", "assets/fullscreen.png", {
@@ -83,11 +90,10 @@ fase2.preload = function () {
     frameWidth: 64,
     frameHeight: 64,
   });
+  texto = this.add.text(120, 80, "Parabéns você é gay").setVisible(false);
 };
 
-
-
-fase2.create = function () {
+fase1.create = function () {
   // Trilha sonora
   trilha = this.sound.add("trilha");
   trilha.play();
@@ -95,10 +101,18 @@ fase2.create = function () {
   // Efeitos sonoros
   parede = this.sound.add("parede");
   voz = this.sound.add("voz");
-  corneta = this.sound.add("corneta");
 
   // Tilemap
-  this.add.image(320, 180, "Quadra");
+  map = this.make.tilemap({ key: "map" });
+
+  // Tilesets
+  tileset0 = map.addTilesetImage("terreno", "terreno");
+  tileset1 = map.addTilesetImage("ARCas", "ARCas");
+
+  // Camada 1: terreno
+  terreno = map.createStaticLayer("terreno", tileset0, 0, 0);
+  terreno.setCollisionByProperty({ collides: true });
+
   // Personagens
   player1 = this.physics.add.sprite(400, 300, "player1");
   player2 = this.physics.add.sprite(300, 400, "player2");
@@ -110,6 +124,7 @@ fase2.create = function () {
 
   player1.body.immovable = true;
   player2.body.immovable = true;
+
   // Animação do jogador 1: a esquerda
   this.anims.create({
     key: "left1",
@@ -233,6 +248,9 @@ fase2.create = function () {
     repeat: -1,
   });
 
+  // Camada 2: ARCas
+  ARCas = map.createStaticLayer("ARCas", tileset1, 0, 0);
+  ARCas.setCollisionByProperty({ collides: true });
 
   // Interação por toque de tela (até 2 toques simultâneos: 0 a 1)
   pointer = this.input.addPointer(1);
@@ -253,6 +271,7 @@ fase2.create = function () {
 
   // Cena (960x960) maior que a tela (800x600)
   this.cameras.main.setBounds(0, 0, 960, 960);
+  this.physics.world.setBounds(0, 0, 960, 960);
 
   // Botão de ativar/desativar tela cheia
   var button = this.add
@@ -311,27 +330,31 @@ fase2.create = function () {
     .setScrollFactor(0);
 
   // Conectar no servidor via WebSocket
-  this.socket = io();
+  socket = io();
 
   // Disparar evento quando jogador entrar na partida
-  var self = this;
   var physics = this.physics;
   var cameras = this.cameras;
   var time = this.time;
-  var socket = this.socket;
 
-  this.socket.on("jogadores", function (jogadores) {
-    if (jogadores.primeiro === self.socket.id) {
+  socket.on("jogadores", function (jogadores) {
+    if (jogadores.primeiro === socket.id) {
       // Define jogador como o primeiro
       jogador = 1;
 
       // Personagens colidem com os limites da cena
+      player1.setCollideWorldBounds(true);
 
       // Detecção de colisão: terreno
+      physics.add.collider(player1, terreno, hitCave, null, this);
 
-      physics.add.collider(player1, bot1, colbot1, null, this);
+      physics.add.collider(player1, player2, baterEspadas, null, this);
+
+      physics.add.collider(player1, bot1, hitARCa, null, this);
+      physics.add.collider(player1, bot1, texto, null, this);
 
       // Detecção de colisão e disparo de evento: ARCas
+      physics.add.collider(player1, ARCas, hitARCa, null, this);
 
       // Câmera seguindo o personagem 1
       cameras.main.startFollow(player1);
@@ -402,17 +425,20 @@ fase2.create = function () {
           midias = stream;
         })
         .catch((error) => console.log(error));
-    } else if (jogadores.segundo === self.socket.id) {
+    } else if (jogadores.segundo === socket.id) {
       // Define jogador como o segundo
       jogador = 2;
 
       // Personagens colidem com os limites da cena
+      player2.setCollideWorldBounds(true);
 
       // Detecção de colisão: terreno
+      physics.add.collider(player2, terreno, hitCave, null, this);
 
       // Detecção de colisão e disparo de evento: ARCas
+      physics.add.collider(player2, ARCas, hitARCa, null, this);
 
-      physics.add.collider(player2, bot1, colbot1, null, this);
+      physics.add.collider(player2, bot1, hitARCa, null, this);
 
       // Câmera seguindo o personagem 2
       cameras.main.startFollow(player2);
@@ -511,7 +537,7 @@ fase2.create = function () {
     console.log(jogadores);
     if (jogadores.primeiro !== undefined && jogadores.segundo !== undefined) {
       // Contagem regressiva em segundos (1.000 milissegundos)
-      timer = 40;
+      timer = 60;
       timedEvent = time.addEvent({
         delay: 1000,
         callback: countdown,
@@ -521,7 +547,7 @@ fase2.create = function () {
     }
   });
 
-  this.socket.on("offer", (socketId, description) => {
+  socket.on("offer", (socketId, description) => {
     remoteConnection = new RTCPeerConnection(ice_servers);
     midias
       .getTracks()
@@ -551,7 +577,7 @@ fase2.create = function () {
   });
 
   // Desenhar o outro jogador
-  this.socket.on("desenharOutroJogador", ({ frame, x, y }) => {
+  socket.on("desenharOutroJogador", ({ frame, x, y }) => {
     if (jogador === 1) {
       player2.setFrame(frame);
       player2.x = x;
@@ -563,8 +589,7 @@ fase2.create = function () {
     }
   });
 };
-
-fase2.update = function (time, delta) {
+fase1.update = function (time, delta) {
   let frame;
   // Controle do personagem por direcionais
   if (jogador === 1) {
@@ -575,7 +600,7 @@ fase2.update = function (time, delta) {
     } catch (e) {
       frame = 0;
     }
-    this.socket.emit("estadoDoJogador", {
+    socket.emit("estadoDoJogador", {
       frame: frame,
       x: player1.body.x,
       y: player1.body.y,
@@ -588,24 +613,40 @@ fase2.update = function (time, delta) {
     } catch (e) {
       frame = 0;
     }
-    this.socket.emit("estadoDoJogador", {
+    socket.emit("estadoDoJogador", {
       frame: frame,
       x: player2.body.x,
       y: player2.body.y,
     });
   }
 
-  function colbot1() {
-    corneta.play();
-  }
-
   // Se o contador chegar a zero, inicia a cena 2
   if (timer === 0) {
     trilha.stop();
-    this.scene.stop();
-    this.scene.start(fim);
+    this.scene.start(fase2);
   }
 };
+
+function hitCave(player, terreno) {
+  // Ao passar pela frente da caverna, toca o efeito sonoro
+  voz.play();
+}
+
+function hitARCa(player, ARCas) {
+  // Ao colidir com a parede, toca o efeito sonoro
+  parede.play();
+}
+
+<<<<<<<< HEAD:js/fase1.js
+if
+
+    texto = this.add.text(120, 80, "Parabéns você é gay").setVisible(true);
+
+========
+function conversa(player, bot1) {
+  this.add.text(120, 80, "Parabens voce é gay")
+}
+>>>>>>>> 89d36044a4c3c8df8dd9ef6ddbaeaac47ffb249e:js/cena1.js
 
 function countdown() {
   // Adiciona o tempo de vida em 1 segundo
@@ -617,4 +658,9 @@ function countdown() {
   timerText.setText(timer);
 }
 
-export { fase2 };
+function baterEspadas() {
+  parede.play();
+}
+
+// Exportar a cena
+export { fase1 };

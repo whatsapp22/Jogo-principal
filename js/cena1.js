@@ -14,20 +14,19 @@ var player1;
 var player2;
 var bot1;
 var parede;
+var texto;
 var voz;
-var textofase1;
 var pointer;
 var touchX;
 var touchY;
 var timedEvent;
 var timer = -1;
 var timerText;
-var textt;
 var life = 0;
 var lifeText;
 var trilha;
 var jogador;
-var corneta;
+var socket
 var ice_servers = {
   iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
 };
@@ -40,7 +39,6 @@ fase1.preload = function () {
   // Tilesets
   this.load.image("terreno", "assets/terreno.png");
   this.load.image("ARCas", "assets/ARCas.png");
-  this.load.image("textofdp", "assets/texto.png");
 
   // Tilemap
   this.load.tilemapTiledJSON("map", "assets/cena1.json");
@@ -67,7 +65,7 @@ fase1.preload = function () {
   // Efeitos sonoros
   this.load.audio("parede", "assets/parede.mp3");
   this.load.audio("voz", "assets/voz.mp3");
-  this.load.audio("corneta", "assets/corneta.mp3");
+
 
   // Tela cheia
   this.load.spritesheet("fullscreen", "assets/fullscreen.png", {
@@ -92,6 +90,7 @@ fase1.preload = function () {
     frameWidth: 64,
     frameHeight: 64,
   });
+  texto = this.add.text(120, 80, "Parabéns você é gay").setVisible(false);
 };
 
 fase1.create = function () {
@@ -102,7 +101,6 @@ fase1.create = function () {
   // Efeitos sonoros
   parede = this.sound.add("parede");
   voz = this.sound.add("voz");
-  corneta = this.sound.add("corneta");
 
   // Tilemap
   map = this.make.tilemap({ key: "map" });
@@ -116,19 +114,16 @@ fase1.create = function () {
   terreno.setCollisionByProperty({ collides: true });
 
   // Personagens
-  player1 = this.physics.add.sprite(400, 300, "player1").setImmovable(true);
-  player2 = this.physics.add.sprite(300, 400, "player2").setImmovable(true);
-  bot1 = this.physics.add.sprite(350, 50, "bot1").setImmovable(true);
+  player1 = this.physics.add.sprite(400, 300, "player1");
+  player2 = this.physics.add.sprite(300, 400, "player2");
+  bot1 = this.physics.add.sprite(350, 50, "bot1");
 
   player1.setSize(25, 35, true);
   player2.setSize(25, 35, true);
   bot1.setSize(35, 45, true);
 
-  textt = this.add
-    .image(200, 50, "textofdp")
-    .setInteractive()
-    .setScrollFactor(0)
-    .setVisible(false);
+  player1.body.immovable = true;
+  player2.body.immovable = true;
 
   // Animação do jogador 1: a esquerda
   this.anims.create({
@@ -229,7 +224,7 @@ fase1.create = function () {
     repeat: -1,
   });
   bot1.anims.play("random", true);
-  //bot1.body.immovable = true;
+  bot1.body.immovable = true;
 
   // Animação do jogador 1: ficar parado (e virado para a direita)
   this.anims.create({
@@ -335,17 +330,15 @@ fase1.create = function () {
     .setScrollFactor(0);
 
   // Conectar no servidor via WebSocket
-  this.socket = io();
+  socket = io();
 
   // Disparar evento quando jogador entrar na partida
-  var self = this;
   var physics = this.physics;
   var cameras = this.cameras;
   var time = this.time;
-  var socket = this.socket;
 
-  this.socket.on("jogadores", function (jogadores) {
-    if (jogadores.primeiro === self.socket.id) {
+  socket.on("jogadores", function (jogadores) {
+    if (jogadores.primeiro === socket.id) {
       // Define jogador como o primeiro
       jogador = 1;
 
@@ -355,9 +348,10 @@ fase1.create = function () {
       // Detecção de colisão: terreno
       physics.add.collider(player1, terreno, hitCave, null, this);
 
-      //physics.add.collider(player1, player2, baterEspadas, null, this);
+      physics.add.collider(player1, player2, baterEspadas, null, this);
 
-      physics.add.collider(player1, bot1, colbot1, null, this);
+      physics.add.collider(player1, bot1, hitARCa, null, this);
+      physics.add.collider(player1, bot1, texto, null, this);
 
       // Detecção de colisão e disparo de evento: ARCas
       physics.add.collider(player1, ARCas, hitARCa, null, this);
@@ -431,7 +425,7 @@ fase1.create = function () {
           midias = stream;
         })
         .catch((error) => console.log(error));
-    } else if (jogadores.segundo === self.socket.id) {
+    } else if (jogadores.segundo === socket.id) {
       // Define jogador como o segundo
       jogador = 2;
 
@@ -444,7 +438,7 @@ fase1.create = function () {
       // Detecção de colisão e disparo de evento: ARCas
       physics.add.collider(player2, ARCas, hitARCa, null, this);
 
-      physics.add.collider(player2, bot1, colbot1, null, this);
+      physics.add.collider(player2, bot1, hitARCa, null, this);
 
       // Câmera seguindo o personagem 2
       cameras.main.startFollow(player2);
@@ -543,7 +537,7 @@ fase1.create = function () {
     console.log(jogadores);
     if (jogadores.primeiro !== undefined && jogadores.segundo !== undefined) {
       // Contagem regressiva em segundos (1.000 milissegundos)
-      timer = 15;
+      timer = 60;
       timedEvent = time.addEvent({
         delay: 1000,
         callback: countdown,
@@ -553,7 +547,7 @@ fase1.create = function () {
     }
   });
 
-  this.socket.on("offer", (socketId, description) => {
+  socket.on("offer", (socketId, description) => {
     remoteConnection = new RTCPeerConnection(ice_servers);
     midias
       .getTracks()
@@ -583,7 +577,7 @@ fase1.create = function () {
   });
 
   // Desenhar o outro jogador
-  this.socket.on("desenharOutroJogador", ({ frame, x, y }) => {
+  socket.on("desenharOutroJogador", ({ frame, x, y }) => {
     if (jogador === 1) {
       player2.setFrame(frame);
       player2.x = x;
@@ -596,36 +590,34 @@ fase1.create = function () {
   });
 };
 fase1.update = function (time, delta) {
-  if (timer >= 0) {
-    let frame;
-    // Controle do personagem por direcionais
-    if (jogador === 1) {
-      // Testa se há animação do oponente,
-      // caso contrário envia o primeiro frame (0)
-      try {
-        frame = player1.anims.getFrameName();
-      } catch (e) {
-        frame = 0;
-      }
-      this.socket.emit("estadoDoJogador", {
-        frame: frame,
-        x: player1.body.x,
-        y: player1.body.y,
-      });
-    } else if (jogador === 2) {
-      // Testa se há animação do oponente,
-      // caso contrário envia o primeiro frame (0)
-      try {
-        frame = player2.anims.getFrameName();
-      } catch (e) {
-        frame = 0;
-      }
-      this.socket.emit("estadoDoJogador", {
-        frame: frame,
-        x: player2.body.x,
-        y: player2.body.y,
-      });
+  let frame;
+  // Controle do personagem por direcionais
+  if (jogador === 1) {
+    // Testa se há animação do oponente,
+    // caso contrário envia o primeiro frame (0)
+    try {
+      frame = player1.anims.currentFrame.index;
+    } catch (e) {
+      frame = 0;
     }
+    socket.emit("estadoDoJogador", {
+      frame: frame,
+      x: player1.body.x,
+      y: player1.body.y,
+    });
+  } else if (jogador === 2) {
+    // Testa se há animação do oponente,
+    // caso contrário envia o primeiro frame (0)
+    try {
+      frame = player2.anims.currentFrame.index;
+    } catch (e) {
+      frame = 0;
+    }
+    socket.emit("estadoDoJogador", {
+      frame: frame,
+      x: player2.body.x,
+      y: player2.body.y,
+    });
   }
 
   // Se o contador chegar a zero, inicia a cena 2
@@ -645,12 +637,16 @@ function hitARCa(player, ARCas) {
   parede.play();
 }
 
-function colbot1(player, bot) {
-  corneta.play();
-  textt.setVisible(true);
-  player.setVelocityX(0);
-  player.setVelocityY(0);
+<<<<<<<< HEAD:js/fase1.js
+if
+
+    texto = this.add.text(120, 80, "Parabéns você é gay").setVisible(true);
+
+========
+function conversa(player, bot1) {
+  this.add.text(120, 80, "Parabens voce é gay")
 }
+>>>>>>>> 89d36044a4c3c8df8dd9ef6ddbaeaac47ffb249e:js/cena1.js
 
 function countdown() {
   // Adiciona o tempo de vida em 1 segundo
