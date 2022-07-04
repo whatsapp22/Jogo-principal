@@ -15,12 +15,14 @@ var player2;
 var bot1;
 var parede;
 var voz;
+var textofase1;
 var pointer;
 var touchX;
 var touchY;
 var timedEvent;
 var timer = -1;
 var timerText;
+var textt;
 var life = 0;
 var lifeText;
 var trilha;
@@ -38,6 +40,7 @@ fase1.preload = function () {
   // Tilesets
   this.load.image("terreno", "assets/terreno.png");
   this.load.image("ARCas", "assets/ARCas.png");
+  this.load.image("textofdp", "assets/texto.png");
 
   // Tilemap
   this.load.tilemapTiledJSON("map", "assets/cena1.json");
@@ -66,19 +69,11 @@ fase1.preload = function () {
   this.load.audio("voz", "assets/voz.mp3");
   this.load.audio("corneta", "assets/corneta.mp3");
 
-
   // Tela cheia
   this.load.spritesheet("fullscreen", "assets/fullscreen.png", {
     frameWidth: 32,
     frameHeight: 32,
   });
-
-  this.add.text(120, 80, "Parabéns você é gay").setVisible(false);
-  timerText = this.add.text(16, 16, timer, {
-    fontSize: "32px",
-    fill: "#000000",
-  });
-
 
   // D-pad
   this.load.spritesheet("esquerda", "assets/esquerda.png", {
@@ -121,16 +116,19 @@ fase1.create = function () {
   terreno.setCollisionByProperty({ collides: true });
 
   // Personagens
-  player1 = this.physics.add.sprite(400, 300, "player1");
-  player2 = this.physics.add.sprite(300, 400, "player2");
-  bot1 = this.physics.add.sprite(350, 50, "bot1");
+  player1 = this.physics.add.sprite(400, 300, "player1").setImmovable(true);
+  player2 = this.physics.add.sprite(300, 400, "player2").setImmovable(true);
+  bot1 = this.physics.add.sprite(350, 50, "bot1").setImmovable(true);
 
   player1.setSize(25, 35, true);
   player2.setSize(25, 35, true);
   bot1.setSize(35, 45, true);
 
-  player1.body.immovable = true;
-  player2.body.immovable = true;
+  textt = this.add
+    .image(200, 50, "textofdp")
+    .setInteractive()
+    .setScrollFactor(0)
+    .setVisible(false);
 
   // Animação do jogador 1: a esquerda
   this.anims.create({
@@ -231,7 +229,7 @@ fase1.create = function () {
     repeat: -1,
   });
   bot1.anims.play("random", true);
-  bot1.body.immovable = true;
+  //bot1.body.immovable = true;
 
   // Animação do jogador 1: ficar parado (e virado para a direita)
   this.anims.create({
@@ -357,11 +355,9 @@ fase1.create = function () {
       // Detecção de colisão: terreno
       physics.add.collider(player1, terreno, hitCave, null, this);
 
-      physics.add.collider(player1, player2, baterEspadas, null, this);
+      //physics.add.collider(player1, player2, baterEspadas, null, this);
 
       physics.add.collider(player1, bot1, colbot1, null, this);
-
-
 
       // Detecção de colisão e disparo de evento: ARCas
       physics.add.collider(player1, ARCas, hitARCa, null, this);
@@ -647,11 +643,10 @@ function hitARCa(player, ARCas) {
   parede.play();
 }
 
-function colbot1(player, bot1) {
+function colbot1() {
   corneta.play();
+  textt.setVisible(true);
 }
-
-
 
 function countdown() {
   // Adiciona o tempo de vida em 1 segundo
