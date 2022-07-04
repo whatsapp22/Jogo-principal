@@ -25,7 +25,7 @@ const config = {
     width: 640,
     height: 360,
   },
-  scene: [ fase2, fim],
+  scene: [inicio, fase1, fase2, fim],
 };
 
 // Criar o objeto principal

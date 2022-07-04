@@ -543,7 +543,7 @@ fase1.create = function () {
     console.log(jogadores);
     if (jogadores.primeiro !== undefined && jogadores.segundo !== undefined) {
       // Contagem regressiva em segundos (1.000 milissegundos)
-      timer = 60;
+      timer = 15;
       timedEvent = time.addEvent({
         delay: 1000,
         callback: countdown,
@@ -596,34 +596,36 @@ fase1.create = function () {
   });
 };
 fase1.update = function (time, delta) {
-  let frame;
-  // Controle do personagem por direcionais
-  if (jogador === 1) {
-    // Testa se há animação do oponente,
-    // caso contrário envia o primeiro frame (0)
-    try {
-      frame = player1.anims.currentFrame.index;
-    } catch (e) {
-      frame = 0;
+  if (timer >= 0) {
+    let frame;
+    // Controle do personagem por direcionais
+    if (jogador === 1) {
+      // Testa se há animação do oponente,
+      // caso contrário envia o primeiro frame (0)
+      try {
+        frame = player1.anims.getFrameName();
+      } catch (e) {
+        frame = 0;
+      }
+      this.socket.emit("estadoDoJogador", {
+        frame: frame,
+        x: player1.body.x,
+        y: player1.body.y,
+      });
+    } else if (jogador === 2) {
+      // Testa se há animação do oponente,
+      // caso contrário envia o primeiro frame (0)
+      try {
+        frame = player2.anims.getFrameName();
+      } catch (e) {
+        frame = 0;
+      }
+      this.socket.emit("estadoDoJogador", {
+        frame: frame,
+        x: player2.body.x,
+        y: player2.body.y,
+      });
     }
-    this.socket.emit("estadoDoJogador", {
-      frame: frame,
-      x: player1.body.x,
-      y: player1.body.y,
-    });
-  } else if (jogador === 2) {
-    // Testa se há animação do oponente,
-    // caso contrário envia o primeiro frame (0)
-    try {
-      frame = player2.anims.currentFrame.index;
-    } catch (e) {
-      frame = 0;
-    }
-    this.socket.emit("estadoDoJogador", {
-      frame: frame,
-      x: player2.body.x,
-      y: player2.body.y,
-    });
   }
 
   // Se o contador chegar a zero, inicia a cena 2
@@ -643,9 +645,11 @@ function hitARCa(player, ARCas) {
   parede.play();
 }
 
-function colbot1() {
+function colbot1(player, bot) {
   corneta.play();
   textt.setVisible(true);
+  player.setVelocityX(0);
+  player.setVelocityY(0);
 }
 
 function countdown() {

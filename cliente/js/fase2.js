@@ -98,7 +98,7 @@ fase2.create = function () {
   corneta = this.sound.add("corneta");
 
   // Tilemap
-  this.add.image(320, 180, "quadra");
+  this.add.image(320, 180, "Quadra");
   // Personagens
   player1 = this.physics.add.sprite(400, 300, "player1");
   player2 = this.physics.add.sprite(300, 400, "player2");
@@ -253,7 +253,6 @@ fase2.create = function () {
 
   // Cena (960x960) maior que a tela (800x600)
   this.cameras.main.setBounds(0, 0, 960, 960);
-  this.physics.world.setBounds(0, 0, 960, 960);
 
   // Botão de ativar/desativar tela cheia
   var button = this.add
@@ -512,7 +511,7 @@ fase2.create = function () {
     console.log(jogadores);
     if (jogadores.primeiro !== undefined && jogadores.segundo !== undefined) {
       // Contagem regressiva em segundos (1.000 milissegundos)
-      timer = 10;
+      timer = 40;
       timedEvent = time.addEvent({
         delay: 1000,
         callback: countdown,
@@ -603,6 +602,7 @@ fase2.update = function (time, delta) {
   // Se o contador chegar a zero, inicia a cena 2
   if (timer === 0) {
     trilha.stop();
+    this.scene.stop();
     this.scene.start(fim);
   }
 };
