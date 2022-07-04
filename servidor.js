@@ -50,5 +50,9 @@ io.on("connection", function (socket) {
   });
 });
 
+<<<<<<< HEAD:servidor/servidor.js
 app.use(static("../cliente"));
+=======
+app.use(express.static("./"));
+>>>>>>> 89d36044a4c3c8df8dd9ef6ddbaeaac47ffb249e:servidor.js
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));

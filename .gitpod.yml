@@ -1,6 +1,8 @@
+image:
+  file: .gitpod.Dockerfile
+ports:
+  - port: 3000
+    onOpen: open-browser
 tasks:
   - init: npm install
-vscode:
-  extensions:
-    - eamodio.gitlens@10.2.1:WIWu3zHU4VPT8r/v866LUw==
-    - esbenp.prettier-vscode@5.8.0:cd2Jz796EPVnD5zeCyctPw==
+    command: npm start

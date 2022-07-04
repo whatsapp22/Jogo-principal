@@ -26,6 +26,7 @@ var life = 0;
 var lifeText;
 var trilha;
 var jogador;
+var socket
 var ice_servers = {
   iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
 };
@@ -329,17 +330,15 @@ fase1.create = function () {
     .setScrollFactor(0);
 
   // Conectar no servidor via WebSocket
-  this.socket = io();
+  socket = io();
 
   // Disparar evento quando jogador entrar na partida
-  var self = this;
   var physics = this.physics;
   var cameras = this.cameras;
   var time = this.time;
-  var socket = this.socket;
 
-  this.socket.on("jogadores", function (jogadores) {
-    if (jogadores.primeiro === self.socket.id) {
+  socket.on("jogadores", function (jogadores) {
+    if (jogadores.primeiro === socket.id) {
       // Define jogador como o primeiro
       jogador = 1;
 
@@ -426,7 +425,7 @@ fase1.create = function () {
           midias = stream;
         })
         .catch((error) => console.log(error));
-    } else if (jogadores.segundo === self.socket.id) {
+    } else if (jogadores.segundo === socket.id) {
       // Define jogador como o segundo
       jogador = 2;
 
@@ -548,7 +547,7 @@ fase1.create = function () {
     }
   });
 
-  this.socket.on("offer", (socketId, description) => {
+  socket.on("offer", (socketId, description) => {
     remoteConnection = new RTCPeerConnection(ice_servers);
     midias
       .getTracks()
@@ -578,7 +577,7 @@ fase1.create = function () {
   });
 
   // Desenhar o outro jogador
-  this.socket.on("desenharOutroJogador", ({ frame, x, y }) => {
+  socket.on("desenharOutroJogador", ({ frame, x, y }) => {
     if (jogador === 1) {
       player2.setFrame(frame);
       player2.x = x;
@@ -601,7 +600,7 @@ fase1.update = function (time, delta) {
     } catch (e) {
       frame = 0;
     }
-    this.socket.emit("estadoDoJogador", {
+    socket.emit("estadoDoJogador", {
       frame: frame,
       x: player1.body.x,
       y: player1.body.y,
@@ -614,7 +613,7 @@ fase1.update = function (time, delta) {
     } catch (e) {
       frame = 0;
     }
-    this.socket.emit("estadoDoJogador", {
+    socket.emit("estadoDoJogador", {
       frame: frame,
       x: player2.body.x,
       y: player2.body.y,
@@ -638,10 +637,16 @@ function hitARCa(player, ARCas) {
   parede.play();
 }
 
+<<<<<<<< HEAD:js/fase1.js
 if
 
     texto = this.add.text(120, 80, "Parabéns você é gay").setVisible(true);
 
+========
+function conversa(player, bot1) {
+  this.add.text(120, 80, "Parabens voce é gay")
+}
+>>>>>>>> 89d36044a4c3c8df8dd9ef6ddbaeaac47ffb249e:js/cena1.js
 
 function countdown() {
   // Adiciona o tempo de vida em 1 segundo
