@@ -637,17 +637,6 @@ function hitARCa(player, ARCas) {
   parede.play();
 }
 
-<<<<<<<< HEAD:js/fase1.js
-if
-
-    texto = this.add.text(120, 80, "Parabéns você é gay").setVisible(true);
-
-========
-function conversa(player, bot1) {
-  this.add.text(120, 80, "Parabens voce é gay")
-}
->>>>>>>> 89d36044a4c3c8df8dd9ef6ddbaeaac47ffb249e:js/cena1.js
-
 function countdown() {
   // Adiciona o tempo de vida em 1 segundo
   life += 1;
