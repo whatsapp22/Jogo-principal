@@ -124,11 +124,8 @@ fase1.create = function () {
   player2.setSize(25, 35, true);
   bot1.setSize(35, 45, true);
 
-  textt = this.add
-    .image(200, 50, "textofdp")
-    .setInteractive()
-    .setScrollFactor(0)
-    .setVisible(false);
+
+  textt = this.add.text(120, 5, "Parabéns, você passou esta fase. Boa sorte nas próximas!!").setVisible(false);
 
   // Animação do jogador 1: a esquerda
   this.anims.create({
