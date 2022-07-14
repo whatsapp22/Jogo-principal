@@ -125,8 +125,7 @@ fase1.create = function () {
   bot1.setSize(35, 45, true);
 
 
-  textt = this.add.text(120, 5, "Parabéns, você passou esta fase. Boa sorte nas próximas!!").setVisible(false);
-
+  textt = this.add.text(120, 5, "Parabéns, você passou esta fase. Boa sorte nas próximas!!").setVisible(false)
   // Animação do jogador 1: a esquerda
   this.anims.create({
     key: "left1",
