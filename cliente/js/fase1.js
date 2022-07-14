@@ -23,11 +23,13 @@ var timedEvent;
 var timer = -1;
 var timerText;
 var textt;
+var textt2;
 var life = 0;
 var lifeText;
 var trilha;
 var jogador;
 var corneta;
+var botao;
 var ice_servers = {
   iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
 };
@@ -40,7 +42,7 @@ fase1.preload = function () {
   // Tilesets
   this.load.image("terreno", "assets/terreno.png");
   this.load.image("ARCas", "assets/ARCas.png");
-  this.load.image("textofdp", "assets/texto.png");
+  this.load.image("transparente", "assets/transparente.png");
 
   // Tilemap
   this.load.tilemapTiledJSON("map", "assets/cena1.json");
@@ -107,6 +109,18 @@ fase1.create = function () {
   // Tilemap
   map = this.make.tilemap({ key: "map" });
 
+  botao = this.add.image(320, 180, "transparente", 0).setInteractive()
+  botao.setVisible(false);
+
+  botao.on(
+    "pointerdown",
+    function () {
+      this.scene.start(fase2);
+    },
+    this
+  );
+
+
   // Tilesets
   tileset0 = map.addTilesetImage("terreno", "terreno");
   tileset1 = map.addTilesetImage("ARCas", "ARCas");
@@ -124,8 +138,21 @@ fase1.create = function () {
   player2.setSize(25, 35, true);
   bot1.setSize(35, 45, true);
 
+  var tutu = "Parabéns, você passou esta fase. Boa sorte nas próximas!!"
+  textt = this.add.text(120, 5, tutu, {
+    fontSize: "14px",
+    fill: "#ffffff",
+  })
+  textt.setVisible(false);
 
-  textt = this.add.text(120, 5, "Parabéns, você passou esta fase. Boa sorte nas próximas!!").setVisible(false)
+  var skip = "Clique na tela para prosseguir."
+  textt2 = this.add.text(120, 250, skip, {
+    fontSize: "14px",
+    fill: "#ffffff",
+  })
+  textt2.setVisible(false);
+
+
   // Animação do jogador 1: a esquerda
   this.anims.create({
     key: "left1",
@@ -644,8 +671,10 @@ function hitARCa(player, ARCas) {
 function colbot1(player, bot) {
   corneta.play();
   textt.setVisible(true);
+  textt2.setVisible(true);
   player.setVelocityX(0);
   player.setVelocityY(0);
+  botao.setVisible(true);
 }
 
 function countdown() {

@@ -252,7 +252,7 @@ fase2.create = function () {
   timerText.setScrollFactor(0);
 
   // Cena (960x960) maior que a tela (800x600)
-  this.cameras.main.setBounds(0, 0, 960, 960);
+  this.cameras.main.setBounds(0, 0, 800, 1000);
 
   // Botão de ativar/desativar tela cheia
   var button = this.add
@@ -593,10 +593,6 @@ fase2.update = function (time, delta) {
       x: player2.body.x,
       y: player2.body.y,
     });
-  }
-
-  function colbot1() {
-    corneta.play();
   }
 
   // Se o contador chegar a zero, inicia a cena 2
