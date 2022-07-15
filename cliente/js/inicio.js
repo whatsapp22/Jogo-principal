@@ -17,7 +17,7 @@ inicio.create = function () {
   button.on(
     "pointerdown",
     function () {
-      this.scale.startFullscreen();
+      //this.scale.startFullscreen();
       this.scene.start(fase1);
     },
     this

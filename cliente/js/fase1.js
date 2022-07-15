@@ -37,6 +37,7 @@ var localConnection;
 var remoteConnection;
 var midias;
 const audio = document.querySelector("audio");
+var socket;
 
 fase1.preload = function () {
   // Tilesets
@@ -109,17 +110,17 @@ fase1.create = function () {
   // Tilemap
   map = this.make.tilemap({ key: "map" });
 
-  botao = this.add.image(320, 180, "transparente", 0).setInteractive()
+  botao = this.add.image(320, 180, "transparente", 0).setInteractive();
   botao.setVisible(false);
 
   botao.on(
     "pointerdown",
     function () {
+      socket.emit("proxima-fase", "fase 2");
       this.scene.start(fase2);
     },
     this
   );
-
 
   // Tilesets
   tileset0 = map.addTilesetImage("terreno", "terreno");
@@ -138,20 +139,19 @@ fase1.create = function () {
   player2.setSize(25, 35, true);
   bot1.setSize(35, 45, true);
 
-  var tutu = "Parabéns, você passou esta fase. Boa sorte nas próximas!!"
+  var tutu = "Parabéns, você passou esta fase. Boa sorte nas próximas!!";
   textt = this.add.text(120, 5, tutu, {
     fontSize: "14px",
     fill: "#ffffff",
-  })
+  });
   textt.setVisible(false);
 
-  var skip = "Clique na tela para prosseguir."
+  var skip = "Clique na tela para prosseguir.";
   textt2 = this.add.text(120, 250, skip, {
     fontSize: "14px",
     fill: "#ffffff",
-  })
+  });
   textt2.setVisible(false);
-
 
   // Animação do jogador 1: a esquerda
   this.anims.create({
@@ -358,17 +358,22 @@ fase1.create = function () {
     .setScrollFactor(0);
 
   // Conectar no servidor via WebSocket
-  this.socket = io();
+  socket = io();
+
+  socket.on("proxima-fase", (fase) => {
+    if (fase === "fase 2") {
+      this.scene.start(fase2);
+    }
+  });
 
   // Disparar evento quando jogador entrar na partida
   var self = this;
   var physics = this.physics;
   var cameras = this.cameras;
   var time = this.time;
-  var socket = this.socket;
 
-  this.socket.on("jogadores", function (jogadores) {
-    if (jogadores.primeiro === self.socket.id) {
+  socket.on("jogadores", function (jogadores) {
+    if (jogadores.primeiro === socket.id) {
       // Define jogador como o primeiro
       jogador = 1;
 
@@ -454,7 +459,7 @@ fase1.create = function () {
           midias = stream;
         })
         .catch((error) => console.log(error));
-    } else if (jogadores.segundo === self.socket.id) {
+    } else if (jogadores.segundo === socket.id) {
       // Define jogador como o segundo
       jogador = 2;
 
@@ -576,7 +581,7 @@ fase1.create = function () {
     }
   });
 
-  this.socket.on("offer", (socketId, description) => {
+  socket.on("offer", (socketId, description) => {
     remoteConnection = new RTCPeerConnection(ice_servers);
     midias
       .getTracks()
@@ -606,7 +611,7 @@ fase1.create = function () {
   });
 
   // Desenhar o outro jogador
-  this.socket.on("desenharOutroJogador", ({ frame, x, y }) => {
+  socket.on("desenharOutroJogador", ({ frame, x, y }) => {
     if (jogador === 1) {
       player2.setFrame(frame);
       player2.x = x;
@@ -630,7 +635,7 @@ fase1.update = function (time, delta) {
       } catch (e) {
         frame = 0;
       }
-      this.socket.emit("estadoDoJogador", {
+      socket.emit("estadoDoJogador", {
         frame: frame,
         x: player1.body.x,
         y: player1.body.y,
@@ -643,7 +648,7 @@ fase1.update = function (time, delta) {
       } catch (e) {
         frame = 0;
       }
-      this.socket.emit("estadoDoJogador", {
+      socket.emit("estadoDoJogador", {
         frame: frame,
         x: player2.body.x,
         y: player2.body.y,

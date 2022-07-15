@@ -41,12 +41,16 @@ io.on("connection", function (socket) {
     if (jogadores.segundo === socket.id) {
       jogadores.segundo = undefined;
     }
-    io.emit("jogadores", jogadores);
+    //io.emit("jogadores", jogadores);
     console.log("-Lista de jogadores: %s", jogadores);
   });
 
   socket.on("estadoDoJogador", function (estado) {
     socket.broadcast.emit("desenharOutroJogador", estado);
+  });
+
+  socket.on("proxima-fase", (fase) => {
+    socket.broadcast.emit("proxima-fase", fase);
   });
 });
 

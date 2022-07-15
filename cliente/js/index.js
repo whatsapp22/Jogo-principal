@@ -2,6 +2,7 @@
 import { inicio } from "./inicio.js";
 import { fase1 } from "./fase1.js";
 import { fase2 } from "./fase2.js";
+//import { fase3 } from "./fase3.js";
 import { fim } from "./fim.js";
 
 
