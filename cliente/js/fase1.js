@@ -5,23 +5,17 @@ import { fase2 } from "./fase2.js";
 var fase1 = new Phaser.Scene("Fase 1");
 
 // Variáveis locais
-var map;
-var tileset0;
+var bombs;
+var bomb;
 var terreno;
-var tileset1;
 var ARCas;
 var player1;
 var player2;
+var countdown;
 var bot1;
+var timer = -1;
 var parede;
 var voz;
-var textofase1;
-var pointer;
-var touchX;
-var touchY;
-var timedEvent;
-var timer = -1;
-var timerText;
 var textt;
 var textt2;
 var life = 0;
@@ -38,21 +32,22 @@ var remoteConnection;
 var midias;
 const audio = document.querySelector("audio");
 var socket;
+var pointer;
 
 fase1.preload = function () {
   // Tilesets
-  this.load.image("terreno", "assets/terreno.png");
-  this.load.image("ARCas", "assets/ARCas.png");
+
   this.load.image("transparente", "assets/transparente.png");
+  this.load.image("quadra", "assets/Quadra.png");
+  this.load.image("bomb", "assets/bomb.png")
 
   // Tilemap
-  this.load.tilemapTiledJSON("map", "assets/cena1.json");
 
   // Jogador 1
   this.load.spritesheet("player1", "assets/player1.png", {
     frameWidth: 60,
     frameHeight: 60,
-  });
+  })
 
   // Jogador 2
   this.load.spritesheet("player2", "assets/player2.png", {
@@ -98,6 +93,8 @@ fase1.preload = function () {
 };
 
 fase1.create = function () {
+
+  this.add.image(320, 300, "quadra");
   // Trilha sonora
   trilha = this.sound.add("trilha");
   trilha.play();
@@ -107,10 +104,7 @@ fase1.create = function () {
   voz = this.sound.add("voz");
   corneta = this.sound.add("corneta");
 
-  // Tilemap
-  map = this.make.tilemap({ key: "map" });
-
-  botao = this.add.image(320, 180, "transparente", 0).setInteractive();
+  botao = this.add.image(520, 380, "transparente", 0).setInteractive();
   botao.setVisible(false);
 
   botao.on(
@@ -122,32 +116,31 @@ fase1.create = function () {
     this
   );
 
-  // Tilesets
-  tileset0 = map.addTilesetImage("terreno", "terreno");
-  tileset1 = map.addTilesetImage("ARCas", "ARCas");
+  //
+
+
 
   // Camada 1: terreno
-  terreno = map.createStaticLayer("terreno", tileset0, 0, 0);
-  terreno.setCollisionByProperty({ collides: true });
+
 
   // Personagens
-  player1 = this.physics.add.sprite(400, 300, "player1").setImmovable(true);
-  player2 = this.physics.add.sprite(300, 400, "player2").setImmovable(true);
-  bot1 = this.physics.add.sprite(350, 50, "bot1").setImmovable(true);
+  player1 = this.physics.add.sprite(360, 755, "player1").setImmovable(true).setScale(1.25);
+  player2 = this.physics.add.sprite(280, 755, "player2").setImmovable(true).setScale(1.25);
+  bot1 = this.physics.add.sprite(350, 30, "bot1").setImmovable(true).setScale(1.25);
 
   player1.setSize(25, 35, true);
   player2.setSize(25, 35, true);
   bot1.setSize(35, 45, true);
 
   var tutu = "Parabéns, você passou esta fase. Boa sorte nas próximas!!";
-  textt = this.add.text(120, 5, tutu, {
-    fontSize: "14px",
+  textt = this.add.text(80, 505, tutu, {
+    fontSize: "16px",
     fill: "#ffffff",
   });
   textt.setVisible(false);
 
   var skip = "Clique na tela para prosseguir.";
-  textt2 = this.add.text(120, 250, skip, {
+  textt2 = this.add.text(80, 530, skip, {
     fontSize: "14px",
     fill: "#ffffff",
   });
@@ -276,9 +269,7 @@ fase1.create = function () {
     repeat: -1,
   });
 
-  // Camada 2: ARCas
-  ARCas = map.createStaticLayer("ARCas", tileset1, 0, 0);
-  ARCas.setCollisionByProperty({ collides: true });
+  // Camada 2: ARCas  ARCas = map.createStaticLayer("ARCas", tileset1, 0, 0);
 
   // Interação por toque de tela (até 2 toques simultâneos: 0 a 1)
   pointer = this.input.addPointer(1);
@@ -291,15 +282,10 @@ fase1.create = function () {
   lifeText.setScrollFactor(0);
 
   // Mostra na tela o contador
-  timerText = this.add.text(16, 16, timer, {
-    fontSize: "32px",
-    fill: "#000000",
-  });
-  timerText.setScrollFactor(0);
 
   // Cena (960x960) maior que a tela (800x600)
-  this.cameras.main.setBounds(0, 0, 960, 960);
-  this.physics.world.setBounds(0, 0, 960, 960);
+  this.cameras.main.setBounds(0, 0, 700, 800);
+  this.physics.world.setBounds(0, 0, 700, 800);
 
   // Botão de ativar/desativar tela cheia
   var button = this.add
@@ -390,6 +376,8 @@ fase1.create = function () {
       // Detecção de colisão e disparo de evento: ARCas
       physics.add.collider(player1, ARCas, hitARCa, null, this);
 
+      physics.add.collider(player1, bombs, hitBomb, null, this);
+
       // Câmera seguindo o personagem 1
       cameras.main.startFollow(player1);
 
@@ -473,6 +461,8 @@ fase1.create = function () {
       physics.add.collider(player2, ARCas, hitARCa, null, this);
 
       physics.add.collider(player2, bot1, colbot1, null, this);
+
+      physics.add.collider(player2, bombs, hitBomb, null, this);
 
       // Câmera seguindo o personagem 2
       cameras.main.startFollow(player2);
@@ -610,6 +600,9 @@ fase1.create = function () {
     conn.addIceCandidate(new RTCIceCandidate(candidate));
   });
 
+
+
+
   // Desenhar o outro jogador
   socket.on("desenharOutroJogador", ({ frame, x, y }) => {
     if (jogador === 1) {
@@ -622,9 +615,111 @@ fase1.create = function () {
       player1.y = y;
     }
   });
+  bombs = this.physics.add.group();
+
+  bomb = bombs.create(20, 580, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(510, 225), 80);
+    bomb = bombs.create(200, 16, "bomb");
+    bomb.setBounce(0.98)
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-312, 713), 80);
+    bomb = bombs.create(201, 336, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(420, -342), 80);
+    bomb = bombs.create(520, 169, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-610, 343), 80);
+    bomb = bombs.create(200, 116, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(530, -210), 80);
+    bomb = bombs.create(680, 126, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(340, 440), 80);
+    bomb = bombs.create(310, 236, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-420, 300), 80);
+    bomb = bombs.create(120, 826, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(520, -310), 80);
+    bomb = bombs.create(530, 116, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-220, 410), 80);
+    bomb = bombs.create(20, 580, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(510, 225), 80);
+    bomb = bombs.create(200, 16, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-652, 713), 80);
+    bomb = bombs.create(201, 336, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(454, -542), 80);
+    bomb = bombs.create(520, 169, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-617, 373), 80);
+    bomb = bombs.create(200, 116, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(230, -230), 80);
+    bomb = bombs.create(680, 126, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(240, 440), 80);
+    bomb = bombs.create(310, 236, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-420, 400), 80);
+    bomb = bombs.create(120, 826, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(620, -310), 80);
+    bomb = bombs.create(330, 116, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-220, 410), 80);
+    bomb = bombs.create(680, 126, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(240, 440), 80);
+    bomb = bombs.create(310, 236, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-420, 400), 80);
+    bomb = bombs.create(120, 826, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(620, -310), 80);
+    bomb = bombs.create(330, 116, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-220, 410), 80);
+    bomb = bombs.create(310, 236, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-420, 400), 80);
+    bomb = bombs.create(120, 826, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(620, -310), 80);
+    bomb = bombs.create(330, 116, "bomb");
+    bomb.setBounce(0.98);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-220, 410), 80);
 };
 fase1.update = function (time, delta) {
-  if (timer >= 0) {
+  if (timer <= 5) {
     let frame;
     // Controle do personagem por direcionais
     if (jogador === 1) {
@@ -656,12 +751,10 @@ fase1.update = function (time, delta) {
     }
   }
 
-  // Se o contador chegar a zero, inicia a cena 2
-  if (timer === 0) {
-    trilha.stop();
-    this.scene.start(fase2);
-  }
+
 };
+
+
 
 function hitCave(player, terreno) {
   // Ao passar pela frente da caverna, toca o efeito sonoro
@@ -682,19 +775,15 @@ function colbot1(player, bot) {
   botao.setVisible(true);
 }
 
-function countdown() {
-  // Adiciona o tempo de vida em 1 segundo
-  life += 1;
-  lifeText.setText(life);
 
-  // Reduz o contador em 1 segundo
-  timer -= 1;
-  timerText.setText(timer);
+function hitBomb(player, bomb) {
+  player1.x = 360
+  player1.y = 755
+  player2.x = 280;
+  player2.y = 755;
 }
 
-function baterEspadas() {
-  parede.play();
-}
+
 
 // Exportar a cena
 export { fase1 };

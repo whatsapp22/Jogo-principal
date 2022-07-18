@@ -9,14 +9,14 @@ import { fim } from "./fim.js";
 // Configuração do jogo
 const config = {
   type: Phaser.AUTO,
-  width:  640,
-  height:  360,
+  width:  1280,
+  height:  720,
   parent: "game-container",
   physics: {
     default: "arcade",
     arcade: {
       gravity: { y: 0 },
-      debug:  true
+      debug: false
     },
   },
   scale: {
