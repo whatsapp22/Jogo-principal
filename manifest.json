@@ -1,13 +1,12 @@
 {
-  "name": "fortfight",
-  "short_name": "adcipt20221",
+  "name": "ARCa 20202",
+  "short_name": "arc20202",
   "lang": "pt-BR",
-  "id": "./index.html",
-  "start_url": "./index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#000000",
-  "orientation": "landscape",
+  "orientation": "any",
   "icons": [
     {
       "src": "assets/logo-128.png",
