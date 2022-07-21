@@ -375,17 +375,16 @@ faselincoln.create = function () {
           localConnection.ontrack = ({ streams: [midias] }) => {
             audio.srcObject = midias;
           };
-          localConnection
-            .createOffer()
-            .then((offer) => localConnection.setLocalDescription(offer))
-            .then(() => {
-              socket.emit("offer", sala, localConnection.localDescription);
-            });
-        })
-        .catch((error) => console.log(error));
-    }
-    console.log(jogadores);
+          localConnectionsocket.on("connect", () => {
+    sala = 2;
+    socket.emit("entrar-na-sala", sala);
   });
+
+  socket.on("jogadores", (jogadores) => {
+    if (jogadores.primeiro === socket.id) {
+      jogador = 1;
+
+      navigator.mediaDevices
 
   socket.on("offer", (socketId, description) => {
     remoteConnection = new RTCPeerConnection(ice_servers);
