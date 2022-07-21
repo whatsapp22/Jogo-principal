@@ -1,4 +1,5 @@
-import { fim } from "./fim.js";
+import { fase1 } from "./fase1.js";
+
 var faselincoln = new Phaser.Scene("Cena 1");
 var cartas = [
   {
@@ -305,8 +306,7 @@ faselincoln.preload = function () {
   this.load.image("bolverme", "assets/bolinhavermelha.png");
   this.load.image("bolcinza", "assets/bolinhacinza.png");
   this.load.image("newgame", "assets/gamenew.png");
-  this.load.image("next", "assets/nextgame.png");
-  this.load.image("teste", "assets/astroinicio.png");
+  //this.load.image("teste", "assets/astroinicio.png");
   this.load.image("vitoria", "assets/victory.png");
   this.load.image("derrota", "assets/defeat.png");
   this.load.image("escolha", "assets/escolha.png");
@@ -327,7 +327,7 @@ faselincoln.create = function () {
     fill: "#ffffff",
   });
   newgame = this.add.image(200, 300, "newgame").setInteractive();
-  next = this.add.image(200, 300, "novonext").setInteractive();
+  next = this.add.image(50, 500, "novonext").setInteractive().setVisible(false);
 
   placartext = this.add.text(260, 75, textofinal, {
     fontSize: "24px",
@@ -375,16 +375,17 @@ faselincoln.create = function () {
           localConnection.ontrack = ({ streams: [midias] }) => {
             audio.srcObject = midias;
           };
-          localConnectionsocket.on("connect", () => {
-    sala = 2;
-    socket.emit("entrar-na-sala", sala);
+          localConnection
+            .createOffer()
+            .then((offer) => localConnection.setLocalDescription(offer))
+            .then(() => {
+              socket.emit("offer", sala, localConnection.localDescription);
+            });
+        })
+        .catch((error) => console.log(error));
+    }
+    console.log(jogadores);
   });
-
-  socket.on("jogadores", (jogadores) => {
-    if (jogadores.primeiro === socket.id) {
-      jogador = 1;
-
-      navigator.mediaDevices
 
   socket.on("offer", (socketId, description) => {
     remoteConnection = new RTCPeerConnection(ice_servers);
@@ -438,7 +439,6 @@ faselincoln.create = function () {
     newgame.setVisible(false);
     contagem = contagem + 1;
     console.log(contagem);
-
     if (contagem === 1) {
       var cartafundo = game.add.image(400, 301, carta.fundo).setInteractive();
       var habilidade = game.add
@@ -7106,7 +7106,7 @@ faselincoln.create = function () {
             vencedor.setVisible(false);
             next.setVisible(true);
             next.on("pointerdown", function () {
-            game.scene.start("fim")
+              game.scene.start(fase1);
             });
             if (contage === "onewintwolossonewin") {
               ganhador1 = "onelosstwowinonelossonewin";
@@ -7505,7 +7505,7 @@ faselincoln.create = function () {
             vencedor.setVisible(false);
             next.setVisible(true);
             next.on("pointerdown", function () {
-            game.scene.start("fim");
+              game.scene.start(fase1);
             });
             if (contage === "twowintwoloss") {
               ganhador2 = "twolosstwowinoneloss";
@@ -7911,7 +7911,7 @@ faselincoln.create = function () {
             vencedor.setVisible(false);
             next.setVisible(true);
             next.on("pointerdown", function () {
-              game.scene.start("fim");
+              game.scene.start(fase1);
             });
             if (contage === "onewintwolossonewin") {
               ganhador1 = "onelosstwowinonelossonewin";
@@ -8307,7 +8307,7 @@ faselincoln.create = function () {
             vencedor.setVisible(false);
             next.setVisible(true);
             next.on("pointerdown", function () {
-              game.scene.start("fim");
+              game.scene.start(fase1);
             });
             if (contage === "twowintwoloss") {
               ganhador2 = "twolosstwowinoneloss";
@@ -8717,7 +8717,7 @@ faselincoln.create = function () {
             vencedor.setVisible(false);
             next.setVisible(true);
             next.on("pointerdown", function () {
-              game.scene.start("fim");
+              game.scene.start(fase1);
             });
             if (contage === "onewintwolossonewin") {
               ganhador1 = "onelosstwowinonelossonewin";
@@ -9117,7 +9117,7 @@ faselincoln.create = function () {
             vencedor.setVisible(false);
             next.setVisible(true);
             next.on("pointerdown", function () {
-              game.scene.start("fim");
+              game.scene.start(fase1);
             });
             if (contage === "twowintwoloss") {
               ganhador2 = "twolosstwowinoneloss";
@@ -9528,7 +9528,7 @@ faselincoln.create = function () {
             vencedor.setVisible(false);
             next.setVisible(true);
             next.on("pointerdown", function () {
-              game.scene.start("fim");
+              game.scene.start(fase1);
             });
             if (contage === "onewintwolossonewin") {
               ganhador1 = "onelosstwowinonelossonewin";
@@ -9927,7 +9927,7 @@ faselincoln.create = function () {
             vencedor.setVisible(false);
             next.setVisible(true);
             next.on("pointerdown", function () {
-              game.scene.start("fim");
+              game.scene.start(fase1);
             });
             if (contage === "twowintwoloss") {
               ganhador2 = "twolosstwowinoneloss";
@@ -10337,7 +10337,7 @@ faselincoln.create = function () {
             vencedor.setVisible(false);
             next.setVisible(true);
             next.on("pointerdown", function () {
-              game.scene.start("fim");
+              game.scene.start(fase1);
             });
             if (contage === "onewintwolossonewin") {
               ganhador1 = "onelosstwowinonelossonewin";
@@ -10736,7 +10736,7 @@ faselincoln.create = function () {
             vencedor.setVisible(false);
             next.setVisible(true);
             next.on("pointerdown", function () {
-              game.scene.start("fim");
+              game.scene.start(fase1);
             });
             if (contage === "twowintwoloss") {
               ganhador2 = "twolosstwowinoneloss";
@@ -14738,7 +14738,7 @@ faselincoln.create = function () {
             newgame.setVisible(false);
             next.setVisible(true);
             next.on("pointerdown", function () {
-              game.scene.start("fim");
+              game.scene.start(fase1);
             });
           }
 
@@ -14775,7 +14775,7 @@ faselincoln.create = function () {
             newgame.setVisible(false);
             next.setVisible(true);
             next.on("pointerdown", function () {
-              game.scene.start("fim");
+              game.scene.start(fase1);
             });
           }
         }
@@ -14783,6 +14783,7 @@ faselincoln.create = function () {
     }
   });
 };
+
 faselincoln.update = function () {
   //this.scene.start(fim);
 };

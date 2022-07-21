@@ -1,5 +1,5 @@
 // Importar a próxima cena
-import { faselincoln } from "./faselincoln.js";
+import { fim } from "./fim.js";
 
 // Criar a cena 1
 var fase1 = new Phaser.Scene("Fase 1");
@@ -24,6 +24,7 @@ var trilha;
 var jogador;
 var corneta;
 var botao;
+var pointer;
 var ice_servers = {
   iceServers: [
     {
@@ -41,6 +42,7 @@ var localConnection;
 var remoteConnection;
 var midias;
 const audio = document.querySelector("audio");
+var socket;
 
 fase1.preload = function () {
   // Tilesets
@@ -101,84 +103,86 @@ fase1.preload = function () {
 };
 
 fase1.create = function () {
+  socket = io();
+
   this.add.image(320, 300, "quadra");
   // Trilha sonora
   trilha = this.sound.add("trilha");
   trilha.play();
 
-    socket.on("connect", () => {
-      sala = 1;
-      socket.emit("entrar-na-sala", sala);
-    });
+  socket.on("connect", () => {
+    sala = 1;
+    socket.emit("entrar-na-sala", sala);
+  });
 
-    socket.on("jogadores", (jogadores) => {
-      if (jogadores.primeiro === socket.id) {
-        jogador = 1;
+  socket.on("jogadores", (jogadores) => {
+    if (jogadores.primeiro === socket.id) {
+      jogador = 1;
 
-        navigator.mediaDevices
-          .getUserMedia({ video: false, audio: true })
-          .then((stream) => {
-            midias = stream;
-          })
-          .catch((error) => console.log(error));
-      } else if (jogadores.segundo === socket.id) {
-        jogador = 2;
+      navigator.mediaDevices
+        .getUserMedia({ video: false, audio: true })
+        .then((stream) => {
+          midias = stream;
+        })
+        .catch((error) => console.log(error));
+    } else if (jogadores.segundo === socket.id) {
+      jogador = 2;
 
-        navigator.mediaDevices
-          .getUserMedia({ video: false, audio: true })
-          .then((stream) => {
-            midias = stream;
-            localConnection = new RTCPeerConnection(ice_servers);
-            midias
-              .getTracks()
-              .forEach((track) => localConnection.addTrack(track, midias));
-            localConnection.onicecandidate = ({ candidate }) => {
-              candidate && socket.emit("candidate", sala, candidate);
-            };
-            console.log(midias);
-            localConnection.ontrack = ({ streams: [midias] }) => {
-              audio.srcObject = midias;
-            };
-            localConnection
-              .createOffer()
-              .then((offer) => localConnection.setLocalDescription(offer))
-              .then(() => {
-                socket.emit("offer", sala, localConnection.localDescription);
-              });
-          })
-          .catch((error) => console.log(error));
-      }
-      console.log(jogadores);
-    });
+      navigator.mediaDevices
+        .getUserMedia({ video: false, audio: true })
+        .then((stream) => {
+          midias = stream;
+          localConnection = new RTCPeerConnection(ice_servers);
+          midias
+            .getTracks()
+            .forEach((track) => localConnection.addTrack(track, midias));
+          localConnection.onicecandidate = ({ candidate }) => {
+            candidate && socket.emit("candidate", sala, candidate);
+          };
+          console.log(midias);
+          localConnection.ontrack = ({ streams: [midias] }) => {
+            audio.srcObject = midias;
+          };
+          localConnection
+            .createOffer()
+            .then((offer) => localConnection.setLocalDescription(offer))
+            .then(() => {
+              socket.emit("offer", sala, localConnection.localDescription);
+            });
+        })
+        .catch((error) => console.log(error));
+    }
+    console.log(jogadores);
+  });
 
-    socket.on("offer", (socketId, description) => {
-      remoteConnection = new RTCPeerConnection(ice_servers);
-      midias
-        .getTracks()
-        .forEach((track) => remoteConnection.addTrack(track, midias));
-      remoteConnection.onicecandidate = ({ candidate }) => {
-        candidate && socket.emit("candidate", sala, candidate);
-      };
-      remoteConnection.ontrack = ({ streams: [midias] }) => {
-        audio.srcObject = midias;
-      };
-      remoteConnection
-        .setRemoteDescription(description)
-        .then(() => remoteConnection.createAnswer())
-        .then((answer) => remoteConnection.setLocalDescription(answer))
-        .then(() => {
-          socket.emit("answer", sala, remoteConnection.localDescription);
-        });
-    });
+  socket.on("offer", (socketId, description) => {
+    remoteConnection = new RTCPeerConnection(ice_servers);
+    midias
+      .getTracks()
+      .forEach((track) => remoteConnection.addTrack(track, midias));
+    remoteConnection.onicecandidate = ({ candidate }) => {
+      candidate && socket.emit("candidate", sala, candidate);
+    };
+    remoteConnection.ontrack = ({ streams: [midias] }) => {
+      audio.srcObject = midias;
+    };
+    remoteConnection
+      .setRemoteDescription(description)
+      .then(() => remoteConnection.createAnswer())
+      .then((answer) => remoteConnection.setLocalDescription(answer))
+      .then(() => {
+        socket.emit("answer", sala, remoteConnection.localDescription);
+      });
+  });
 
-    socket.on("answer", (description) => {
-      localConnection.setRemoteDescription(description);
-    });
+  socket.on("answer", (description) => {
+    localConnection.setRemoteDescription(description);
+  });
 
-    socket.on("candidate", (candidate) => {
-      const conn = localConnection || remoteConnection;
-      conn.addIceCandidate(new RTCIceCandidate(candidate));
-    });
+  socket.on("candidate", (candidate) => {
+    const conn = localConnection || remoteConnection;
+    conn.addIceCandidate(new RTCIceCandidate(candidate));
+  });
   // Efeitos sonoros
   parede = this.sound.add("parede");
   voz = this.sound.add("voz");
@@ -190,7 +194,7 @@ fase1.create = function () {
   botao.on(
     "pointerdown",
     function () {
-      socket.emit("proxima-fase", sala,"faselincoln");
+      socket.emit("proxima-fase", "faselincoln", sala);
       this.scene.start(faselincoln);
     },
     this
@@ -429,9 +433,6 @@ fase1.create = function () {
     .setInteractive()
     .setScrollFactor(0);
 
-  // Conectar no servidor via WebSocket
-  socket = io();
-
   socket.on("proxima-fase", (fase) => {
     if (fase === "fase 2") {
       this.scene.start(fase2);
@@ -471,60 +472,44 @@ fase1.create = function () {
       // para tocar a tela ("pointerover")
       // e ao terminar essa interação ("pointerout")
       esquerda.on("pointerover", () => {
-        if (timer > 0) {
-          esquerda.setFrame(1);
-          player1.setVelocityX(-160);
-          player1.anims.play("left1", true);
-        }
+        esquerda.setFrame(1);
+        player1.setVelocityX(-160);
+        player1.anims.play("left1", true);
       });
       esquerda.on("pointerout", () => {
-        if (timer > 0) {
-          esquerda.setFrame(0);
-          player1.setVelocityX(0);
-          player1.anims.play("stopped1", true);
-        }
+        esquerda.setFrame(0);
+        player1.setVelocityX(0);
+        player1.anims.play("stopped1", true);
       });
       direita.on("pointerover", () => {
-        if (timer > 0) {
-          direita.setFrame(1);
-          player1.setVelocityX(160);
-          player1.anims.play("right1", true);
-        }
+        direita.setFrame(1);
+        player1.setVelocityX(160);
+        player1.anims.play("right1", true);
       });
       direita.on("pointerout", () => {
-        if (timer > 0) {
-          direita.setFrame(0);
-          player1.setVelocityX(0);
-          player1.anims.play("stopped1", true);
-        }
+        direita.setFrame(0);
+        player1.setVelocityX(0);
+        player1.anims.play("stopped1", true);
       });
       cima.on("pointerover", () => {
-        if (timer > 0) {
-          cima.setFrame(1);
-          player1.setVelocityY(-160);
-          player1.anims.play("subindo1", true);
-        }
+        cima.setFrame(1);
+        player1.setVelocityY(-160);
+        player1.anims.play("subindo1", true);
       });
       cima.on("pointerout", () => {
-        if (timer > 0) {
-          cima.setFrame(0);
-          player1.setVelocityY(0);
-          player1.anims.play("stopped1", true);
-        }
+        cima.setFrame(0);
+        player1.setVelocityY(0);
+        player1.anims.play("stopped1", true);
       });
       baixo.on("pointerover", () => {
-        if (timer > 0) {
-          baixo.setFrame(1);
-          player1.setVelocityY(160);
-          player1.anims.play("descendo1", true);
-        }
+        baixo.setFrame(1);
+        player1.setVelocityY(160);
+        player1.anims.play("descendo1", true);
       });
       baixo.on("pointerout", () => {
-        if (timer > 0) {
-          baixo.setFrame(0);
-          player1.setVelocityY(0);
-          player1.anims.play("stopped1", true);
-        }
+        baixo.setFrame(0);
+        player1.setVelocityY(0);
+        player1.anims.play("stopped1", true);
       });
 
       navigator.mediaDevices
@@ -557,60 +542,44 @@ fase1.create = function () {
       // para tocar a tela ("pointerover")
       // e ao terminar essa interação ("pointerout")
       esquerda.on("pointerover", () => {
-        if (timer > 0) {
-          esquerda.setFrame(1);
-          player2.setVelocityX(-160);
-          player2.anims.play("left2", true);
-        }
+        esquerda.setFrame(1);
+        player2.setVelocityX(-160);
+        player2.anims.play("left2", true);
       });
       esquerda.on("pointerout", () => {
-        if (timer > 0) {
-          esquerda.setFrame(0);
-          player2.setVelocityX(0);
-          player2.anims.play("stopped2", true);
-        }
+        esquerda.setFrame(0);
+        player2.setVelocityX(0);
+        player2.anims.play("stopped2", true);
       });
       direita.on("pointerover", () => {
-        if (timer > 0) {
-          direita.setFrame(1);
-          player2.setVelocityX(160);
-          player2.anims.play("right2", true);
-        }
+        direita.setFrame(1);
+        player2.setVelocityX(160);
+        player2.anims.play("right2", true);
       });
       direita.on("pointerout", () => {
-        if (timer > 0) {
-          direita.setFrame(0);
-          player2.setVelocityX(0);
-          player2.anims.play("stopped2", true);
-        }
+        direita.setFrame(0);
+        player2.setVelocityX(0);
+        player2.anims.play("stopped2", true);
       });
       cima.on("pointerover", () => {
-        if (timer > 0) {
-          cima.setFrame(1);
-          player2.setVelocityY(-160);
-          player2.anims.play("subindo2", true);
-        }
+        cima.setFrame(1);
+        player2.setVelocityY(-160);
+        player2.anims.play("subindo2", true);
       });
       cima.on("pointerout", () => {
-        if (timer > 0) {
-          cima.setFrame(0);
-          player2.setVelocityY(0);
-          player2.anims.play("stopped2", true);
-        }
+        cima.setFrame(0);
+        player2.setVelocityY(0);
+        player2.anims.play("stopped2", true);
       });
       baixo.on("pointerover", () => {
-        if (timer > 0) {
-          baixo.setFrame(1);
-          player2.setVelocityY(160);
-          player2.anims.play("descendo2", true);
-        }
+        baixo.setFrame(1);
+        player2.setVelocityY(160);
+        player2.anims.play("descendo2", true);
       });
       baixo.on("pointerout", () => {
-        if (timer > 0) {
-          baixo.setFrame(0);
-          player2.setVelocityY(0);
-          player2.anims.play("stopped2", true);
-        }
+        baixo.setFrame(0);
+        player2.setVelocityY(0);
+        player2.anims.play("stopped2", true);
       });
 
       navigator.mediaDevices
@@ -634,7 +603,8 @@ fase1.create = function () {
             .then((offer) => localConnection.setLocalDescription(offer))
             .then(() => {
               socket.emit(
-                "offer",sala,
+                "offer",
+                sala,
                 jogadores.primeiro,
                 localConnection.localDescription
               );
@@ -647,13 +617,6 @@ fase1.create = function () {
     console.log(jogadores);
     if (jogadores.primeiro !== undefined && jogadores.segundo !== undefined) {
       // Contagem regressiva em segundos (1.000 milissegundos)
-      timer = 15;
-      timedEvent = time.addEvent({
-        delay: 1000,
-        callback: countdown,
-        callbackScope: this,
-        loop: true,
-      });
     }
   });
 
@@ -663,7 +626,7 @@ fase1.create = function () {
       .getTracks()
       .forEach((track) => remoteConnection.addTrack(track, midias));
     remoteConnection.onicecandidate = ({ candidate }) => {
-      candidate && socket.emit("candidate", socketId,sala, candidate);
+      candidate && socket.emit("candidate", socketId, sala, candidate);
     };
     remoteConnection.ontrack = ({ streams: [midias] }) => {
       audio.srcObject = midias;
@@ -673,7 +636,12 @@ fase1.create = function () {
       .then(() => remoteConnection.createAnswer())
       .then((answer) => remoteConnection.setLocalDescription(answer))
       .then(() => {
-        socket.emit("answer", socketId, sala, remoteConnection.localDescription);
+        socket.emit(
+          "answer",
+          socketId,
+          sala,
+          remoteConnection.localDescription
+        );
       });
   });
 
@@ -801,6 +769,7 @@ fase1.create = function () {
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-220, 410), 80);
 };
+
 fase1.update = function (time, delta) {
   if (timer <= 5) {
     let frame;
@@ -813,7 +782,7 @@ fase1.update = function (time, delta) {
       } catch (e) {
         frame = 0;
       }
-      socket.emit("estadoDoJogador",sala, {
+      socket.emit("estadoDoJogador", sala, {
         frame: frame,
         x: player1.body.x,
         y: player1.body.y,
@@ -826,7 +795,7 @@ fase1.update = function (time, delta) {
       } catch (e) {
         frame = 0;
       }
-      socket.emit("estadoDoJogador", sala,{
+      socket.emit("estadoDoJogador", sala, {
         frame: frame,
         x: player2.body.x,
         y: player2.body.y,

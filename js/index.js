@@ -9,8 +9,8 @@ import { fim } from "./fim.js";
 // Configuração do jogo
 const config = {
   type: Phaser.AUTO,
-  width: 1280,
-  height: 720,
+  width: 800,
+  height: 600,
   parent: "game-container",
   physics: {
     default: "arcade",
@@ -23,10 +23,10 @@ const config = {
     mode: Phaser.Scale.FIT,
     parent: "game-container",
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: 640,
-    height: 360,
+    width: 800,
+    height: 600,
   },
-  scene: [fase1, fase2,faselincoln, fim],
+  scene: [faselincoln,fase1,fase2,fim],
 };
 
 // Criar o objeto principal
