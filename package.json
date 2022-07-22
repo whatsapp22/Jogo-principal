@@ -7,7 +7,7 @@
         "node": ">=16.x"
     },
     "scripts": {
-        "start": "node servidor.js",
+        "start": "node servidor.js"
     },
     "version": "1.0.0"
 }
