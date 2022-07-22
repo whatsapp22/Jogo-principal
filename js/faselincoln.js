@@ -348,7 +348,7 @@ faselincoln.create = function () {
   });
 
   var game = this;
-  socket = io("https://lit-thicket-45529.herokuapp.com/");
+  socket = io("https://polar-forest-42186.herokuapp.com/");
 
   socket.on("connect", () => {
     sala = 2;
