@@ -717,7 +717,7 @@ fase2.update = function (time, delta) {
   sombra.x = player1.body.position.x;
   sombra.y = player1.body.position.y;
 
-
+  
 
   if (endgame === true) {
     socket.emit("estadoDoJogador", sala, {
@@ -728,7 +728,7 @@ fase2.update = function (time, delta) {
       y: player2.body.y,
     });
     trilha.stop();
-    this.scene.start(fim);
+    this.scene.start(inicio);
   }
 
 };
