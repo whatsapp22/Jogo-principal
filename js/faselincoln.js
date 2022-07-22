@@ -348,7 +348,7 @@ faselincoln.create = function () {
   });
 
   var game = this;
-  socket = io();
+  socket = io("https://lit-thicket-45529.herokuapp.com/");
 
   socket.on("connect", () => {
     sala = 2;

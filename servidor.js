@@ -66,6 +66,10 @@ io.on("connection", (socket) => {
   socket.on("decisao", (sala, estado) => {
     socket.broadcast.to(sala).emit("decisao", estado);
   });
+  socket.on("fimDaPartida", (sala, estado) => {
+    socket.broadcast.to(sala).emit("fimDaPartida");
+  });
+
 });
 
 // Abrir porta para HTTPS/WSS

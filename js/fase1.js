@@ -9,8 +9,8 @@ var bombs;
 var bomb;
 var terreno;
 var ARCas;
-var player1;
-var player2;
+var player11;
+var player22;
 var countdown;
 var bot1;
 var timer = -1;
@@ -54,13 +54,13 @@ fase1.preload = function () {
   // Tilemap
 
   // Jogador 1
-  this.load.spritesheet("player1", "assets/player1.png", {
+  this.load.spritesheet("player11", "assets/bau/player11.png", {
     frameWidth: 60,
     frameHeight: 60,
   });
 
   // Jogador 2
-  this.load.spritesheet("player2", "assets/player2.png", {
+  this.load.spritesheet("player22", "assets/bau/player22.png", {
     frameWidth: 60,
     frameHeight: 60,
   });
@@ -103,7 +103,7 @@ fase1.preload = function () {
 };
 
 fase1.create = function () {
-  socket = io();
+  socket = io("https://lit-thicket-45529.herokuapp.com/");
 
   this.add.image(320, 300, "quadra");
   // Trilha sonora
@@ -205,12 +205,12 @@ fase1.create = function () {
   // Camada 1: terreno
 
   // Personagens
-  player1 = this.physics.add
-    .sprite(360, 755, "player1")
+  player11 = this.physics.add
+    .sprite(360, 755, "player11")
     .setImmovable(true)
     .setScale(1.25);
-  player2 = this.physics.add
-    .sprite(280, 755, "player2")
+  player22 = this.physics.add
+    .sprite(280, 755, "player22")
     .setImmovable(true)
     .setScale(1.25);
   bot1 = this.physics.add
@@ -218,8 +218,8 @@ fase1.create = function () {
     .setImmovable(true)
     .setScale(1.25);
 
-  player1.setSize(25, 35, true);
-  player2.setSize(25, 35, true);
+  player11.setSize(25, 35, true);
+  player22.setSize(25, 35, true);
   bot1.setSize(35, 45, true);
 
   var tutu = "Parabéns, você passou esta fase. Boa sorte nas próximas!!";
@@ -239,7 +239,7 @@ fase1.create = function () {
   // Animação do jogador 1: a esquerda
   this.anims.create({
     key: "left1",
-    frames: this.anims.generateFrameNumbers("player1", {
+    frames: this.anims.generateFrameNumbers("player11", {
       start: 4,
       end: 6,
     }),
@@ -250,7 +250,7 @@ fase1.create = function () {
   // Animação do jogador 2: a esquerda
   this.anims.create({
     key: "left2",
-    frames: this.anims.generateFrameNumbers("player2", {
+    frames: this.anims.generateFrameNumbers("player22", {
       start: 4,
       end: 6,
     }),
@@ -261,7 +261,7 @@ fase1.create = function () {
   // Animação do jogador 1: a direita
   this.anims.create({
     key: "right1",
-    frames: this.anims.generateFrameNumbers("player1", {
+    frames: this.anims.generateFrameNumbers("player11", {
       start: 7,
       end: 9,
     }),
@@ -272,7 +272,7 @@ fase1.create = function () {
   // Animação do player 1 pra baixo
   this.anims.create({
     key: "descendo1",
-    frames: this.anims.generateFrameNumbers("player1", {
+    frames: this.anims.generateFrameNumbers("player11", {
       start: 1,
       end: 3,
     }),
@@ -283,7 +283,7 @@ fase1.create = function () {
   // Animação do player 1 pra cima
   this.anims.create({
     key: "subindo1",
-    frames: this.anims.generateFrameNumbers("player1", {
+    frames: this.anims.generateFrameNumbers("player11", {
       start: 10,
       end: 12,
     }),
@@ -294,7 +294,7 @@ fase1.create = function () {
   // Animação do player 2 pra baixo
   this.anims.create({
     key: "descendo2",
-    frames: this.anims.generateFrameNumbers("player2", {
+    frames: this.anims.generateFrameNumbers("player22", {
       start: 1,
       end: 3,
     }),
@@ -305,7 +305,7 @@ fase1.create = function () {
   // Animação do player 2 pra cima
   this.anims.create({
     key: "subindo2",
-    frames: this.anims.generateFrameNumbers("player2", {
+    frames: this.anims.generateFrameNumbers("player22", {
       start: 10,
       end: 12,
     }),
@@ -316,7 +316,7 @@ fase1.create = function () {
   // Animação do jogador 2: a direita
   this.anims.create({
     key: "right2",
-    frames: this.anims.generateFrameNumbers("player2", {
+    frames: this.anims.generateFrameNumbers("player22", {
       start: 7,
       end: 9,
     }),
@@ -340,7 +340,7 @@ fase1.create = function () {
   // Animação do jogador 1: ficar parado (e virado para a direita)
   this.anims.create({
     key: "stopped1",
-    frames: this.anims.generateFrameNumbers("player1", {
+    frames: this.anims.generateFrameNumbers("player11", {
       start: 0,
       end: 0,
     }),
@@ -351,7 +351,7 @@ fase1.create = function () {
   // Animação do jogador 2: ficar parado (e virado para a direita)
   this.anims.create({
     key: "stopped2",
-    frames: this.anims.generateFrameNumbers("player2", {
+    frames: this.anims.generateFrameNumbers("player22", {
       start: 0,
       end: 0,
     }),
@@ -451,65 +451,65 @@ fase1.create = function () {
       jogador = 1;
 
       // Personagens colidem com os limites da cena
-      player1.setCollideWorldBounds(true);
+      player11.setCollideWorldBounds(true);
 
       // Detecção de colisão: terreno
-      physics.add.collider(player1, terreno, hitCave, null, this);
+      physics.add.collider(player11, terreno, hitCave, null, this);
 
-      //physics.add.collider(player1, player2, baterEspadas, null, this);
+      //physics.add.collider(player11, player22, baterEspadas, null, this);
 
-      physics.add.collider(player1, bot1, colbot1, null, this);
+      physics.add.collider(player11, bot1, colbot1, null, this);
 
       // Detecção de colisão e disparo de evento: ARCas
-      physics.add.collider(player1, ARCas, hitARCa, null, this);
+      physics.add.collider(player11, ARCas, hitARCa, null, this);
 
-      physics.add.collider(player1, bombs, hitBomb, null, this);
+      physics.add.collider(player11, bombs, hitBomb, null, this);
 
       // Câmera seguindo o personagem 1
-      cameras.main.startFollow(player1);
+      cameras.main.startFollow(player11);
 
       // D-pad: para cada direção já os eventos
       // para tocar a tela ("pointerover")
       // e ao terminar essa interação ("pointerout")
       esquerda.on("pointerover", () => {
         esquerda.setFrame(1);
-        player1.setVelocityX(-160);
-        player1.anims.play("left1", true);
+        player11.setVelocityX(-160);
+        player11.anims.play("left1", true);
       });
       esquerda.on("pointerout", () => {
         esquerda.setFrame(0);
-        player1.setVelocityX(0);
-        player1.anims.play("stopped1", true);
+        player11.setVelocityX(0);
+        player11.anims.play("stopped1", true);
       });
       direita.on("pointerover", () => {
         direita.setFrame(1);
-        player1.setVelocityX(160);
-        player1.anims.play("right1", true);
+        player11.setVelocityX(160);
+        player11.anims.play("right1", true);
       });
       direita.on("pointerout", () => {
         direita.setFrame(0);
-        player1.setVelocityX(0);
-        player1.anims.play("stopped1", true);
+        player11.setVelocityX(0);
+        player11.anims.play("stopped1", true);
       });
       cima.on("pointerover", () => {
         cima.setFrame(1);
-        player1.setVelocityY(-160);
-        player1.anims.play("subindo1", true);
+        player11.setVelocityY(-160);
+        player11.anims.play("subindo1", true);
       });
       cima.on("pointerout", () => {
         cima.setFrame(0);
-        player1.setVelocityY(0);
-        player1.anims.play("stopped1", true);
+        player11.setVelocityY(0);
+        player11.anims.play("stopped1", true);
       });
       baixo.on("pointerover", () => {
         baixo.setFrame(1);
-        player1.setVelocityY(160);
-        player1.anims.play("descendo1", true);
+        player11.setVelocityY(160);
+        player11.anims.play("descendo1", true);
       });
       baixo.on("pointerout", () => {
         baixo.setFrame(0);
-        player1.setVelocityY(0);
-        player1.anims.play("stopped1", true);
+        player11.setVelocityY(0);
+        player11.anims.play("stopped1", true);
       });
 
       navigator.mediaDevices
@@ -523,63 +523,63 @@ fase1.create = function () {
       jogador = 2;
 
       // Personagens colidem com os limites da cena
-      player2.setCollideWorldBounds(true);
+      player22.setCollideWorldBounds(true);
 
       // Detecção de colisão: terreno
-      physics.add.collider(player2, terreno, hitCave, null, this);
+      physics.add.collider(player22, terreno, hitCave, null, this);
 
       // Detecção de colisão e disparo de evento: ARCas
-      physics.add.collider(player2, ARCas, hitARCa, null, this);
+      physics.add.collider(player22, ARCas, hitARCa, null, this);
 
-      physics.add.collider(player2, bot1, colbot1, null, this);
+      physics.add.collider(player22, bot1, colbot1, null, this);
 
-      physics.add.collider(player2, bombs, hitBomb, null, this);
+      physics.add.collider(player22, bombs, hitBomb, null, this);
 
       // Câmera seguindo o personagem 2
-      cameras.main.startFollow(player2);
+      cameras.main.startFollow(player22);
 
       // D-pad: para cada direção já os eventos
       // para tocar a tela ("pointerover")
       // e ao terminar essa interação ("pointerout")
       esquerda.on("pointerover", () => {
         esquerda.setFrame(1);
-        player2.setVelocityX(-160);
-        player2.anims.play("left2", true);
+        player22.setVelocityX(-160);
+        player22.anims.play("left2", true);
       });
       esquerda.on("pointerout", () => {
         esquerda.setFrame(0);
-        player2.setVelocityX(0);
-        player2.anims.play("stopped2", true);
+        player22.setVelocityX(0);
+        player22.anims.play("stopped2", true);
       });
       direita.on("pointerover", () => {
         direita.setFrame(1);
-        player2.setVelocityX(160);
-        player2.anims.play("right2", true);
+        player22.setVelocityX(160);
+        player22.anims.play("right2", true);
       });
       direita.on("pointerout", () => {
         direita.setFrame(0);
-        player2.setVelocityX(0);
-        player2.anims.play("stopped2", true);
+        player22.setVelocityX(0);
+        player22.anims.play("stopped2", true);
       });
       cima.on("pointerover", () => {
         cima.setFrame(1);
-        player2.setVelocityY(-160);
-        player2.anims.play("subindo2", true);
+        player22.setVelocityY(-160);
+        player22.anims.play("subindo2", true);
       });
       cima.on("pointerout", () => {
         cima.setFrame(0);
-        player2.setVelocityY(0);
-        player2.anims.play("stopped2", true);
+        player22.setVelocityY(0);
+        player22.anims.play("stopped2", true);
       });
       baixo.on("pointerover", () => {
         baixo.setFrame(1);
-        player2.setVelocityY(160);
-        player2.anims.play("descendo2", true);
+        player22.setVelocityY(160);
+        player22.anims.play("descendo2", true);
       });
       baixo.on("pointerout", () => {
         baixo.setFrame(0);
-        player2.setVelocityY(0);
-        player2.anims.play("stopped2", true);
+        player22.setVelocityY(0);
+        player22.anims.play("stopped2", true);
       });
 
       navigator.mediaDevices
@@ -657,13 +657,13 @@ fase1.create = function () {
   // Desenhar o outro jogador
   socket.on("desenharOutroJogador", ({ frame, x, y }) => {
     if (jogador === 1) {
-      player2.setFrame(frame);
-      player2.x = x;
-      player2.y = y;
+      player22.setFrame(frame);
+      player22.x = x;
+      player22.y = y;
     } else if (jogador === 2) {
-      player1.setFrame(frame);
-      player1.x = x;
-      player1.y = y;
+      player11.setFrame(frame);
+      player11.x = x;
+      player11.y = y;
     }
   });
   bombs = this.physics.add.group();
@@ -778,27 +778,27 @@ fase1.update = function (time, delta) {
       // Testa se há animação do oponente,
       // caso contrário envia o primeiro frame (0)
       try {
-        frame = player1.anims.getFrameName();
+        frame = player11.anims.getFrameName();
       } catch (e) {
         frame = 0;
       }
       socket.emit("estadoDoJogador", sala, {
         frame: frame,
-        x: player1.body.x,
-        y: player1.body.y,
+        x: player11.body.x,
+        y: player11.body.y,
       });
     } else if (jogador === 2) {
       // Testa se há animação do oponente,
       // caso contrário envia o primeiro frame (0)
       try {
-        frame = player2.anims.getFrameName();
+        frame = player22.anims.getFrameName();
       } catch (e) {
         frame = 0;
       }
       socket.emit("estadoDoJogador", sala, {
         frame: frame,
-        x: player2.body.x,
-        y: player2.body.y,
+        x: player22.body.x,
+        y: player22.body.y,
       });
     }
   }
@@ -825,10 +825,10 @@ function colbot1(player, bot) {
 }
 
 function hitBomb(player, bomb) {
-  player1.x = 360;
-  player1.y = 755;
-  player2.x = 280;
-  player2.y = 755;
+  player11.x = 360;
+  player11.y = 755;
+  player22.x = 280;
+  player22.y = 755;
 }
 
 // Exportar a cena

@@ -25,6 +25,7 @@ var bot1;
 var parede;
 var texto;
 var voz;
+var exit;
 var pointer;
 var touchX;
 var touchY;
@@ -54,14 +55,15 @@ const audio = document.querySelector("audio");
 fase2.preload = function () {
   // Tilesets
   this.load.image("bibli", "assets/bibli.png");
+  this.load.image("exit", "assets/inicio.png");
   // Tilemap
   this.load.tilemapTiledJSON("map", "assets/biblioteca.json");
 
   // Jogador 1
-  this.load.spritesheet("player1", "./assets/player1.png", { frameWidth: 72, frameHeight: 72, });
+  this.load.spritesheet("player1", "./assets/player1-.png", { frameWidth: 72, frameHeight: 72, });
 
   // Jogador 2
-  this.load.spritesheet("player2", "assets/player2.png", {
+  this.load.spritesheet("player2", "assets/player2-.png", {
     frameWidth: 72,
     frameHeight: 72,
   });
@@ -91,25 +93,25 @@ fase2.preload = function () {
 
 
   // Tela cheia
-  this.load.spritesheet("fullscreen", "assets/fullscreen.png", {
+  this.load.spritesheet("fullscreen", "assets/fullscreen1.png", {
     frameWidth: 32,
     frameHeight: 32,
   });
 
   // D-pad
-  this.load.spritesheet("esquerda", "assets/esquerda.png", {
+  this.load.spritesheet("esquerda", "assets/esquerda-.png", {
     frameWidth: 64,
     frameHeight: 64,
   });
-  this.load.spritesheet("direita", "assets/direita.png", {
+  this.load.spritesheet("direita", "assets/direita-.png", {
     frameWidth: 64,
     frameHeight: 64,
   });
-  this.load.spritesheet("cima", "assets/cima.png", {
+  this.load.spritesheet("cima", "assets/cima-.png", {
     frameWidth: 64,
     frameHeight: 64,
   });
-  this.load.spritesheet("baixo", "assets/baixo.png", {
+  this.load.spritesheet("baixo", "assets/baixo-.png", {
     frameWidth: 64,
     frameHeight: 64,
   });
@@ -119,7 +121,7 @@ fase2.preload = function () {
 fase2.create = function () {
 
   endgame = false;
-socket = io();
+  socket = io("https://lit-thicket-45529.herokuapp.com/");
 
 socket.on("connect", () => {
   sala = 3;
@@ -216,7 +218,7 @@ socket.on("candidate", (candidate) => {
   player2 = this.physics.add.sprite(910, 940, "player2").setScale(0.4);
   player2.setSize(100, 120, true);
 
-  bot1 = this.physics.add.sprite(792, 35, "bot1").setScale(0.3);
+  bot1 = this.physics.add.sprite(912, 35, "bot1").setScale(0.3);
 
   player1.body.immovable = true;
   player2.body.immovable = true;
@@ -319,7 +321,7 @@ socket.on("candidate", (candidate) => {
   //Itens
   book1 = this.physics.add.sprite(495, 385, "book1").setScale(0.4); //Vermelho OK
   book2 = this.physics.add.sprite(440, 567, "book2").setScale(0.4); //Amarelo OK
-  book3 = this.physics.add.sprite(913, 47, "book3").setScale(0.4);
+  book3 = this.physics.add.sprite(906, 47, "book3").setScale(0.4);
   book4 = this.physics.add.sprite(785, 272, "book4").setScale(0.4);
   book5 = this.physics.add.sprite(440, 810, "book5").setScale(0.4); //Azul OK
   book6 = this.physics.add.sprite(495, 50, "book6").setScale(0.4);
@@ -429,7 +431,7 @@ socket.on("candidate", (candidate) => {
 
 
   // Conectar no servidor via WebSocket
-  socket = io();
+  socket = io("https://lit-thicket-45529.herokuapp.com/");
 
   var physics = this.physics;
   var cameras = this.cameras;
@@ -669,6 +671,12 @@ socket.on("candidate", (candidate) => {
     const conn = localConnection || remoteConnection;
     conn.addIceCandidate(new RTCIceCandidate(candidate));
   });
+  if (jogador === 2) {
+    socket.on("fimDaPartida", () => {
+      this.scene.start(fim);
+    });
+  }
+
 
   // Desenhar o outro jogador
   socket.on("desenharOutroJogador", ({ frame, x, y }) => {
@@ -717,22 +725,29 @@ fase2.update = function (time, delta) {
   sombra.x = player1.body.position.x;
   sombra.y = player1.body.position.y;
 
-  
 
-  if (endgame === true) {
+
+  if (inventory === 1 && endgame === false) {
+      exit = this.add.image(600, 40).setInteractive().setVisible(true);
+      exit.on("pointerdown", function () {
+        game.scene.start(inicio);
+      });
     socket.emit("estadoDoJogador", sala, {
       frame: frame,
-      x: player1.body.x,
-      y: player1.body.y,
       x: player2.body.x,
       y: player2.body.y,
     });
     trilha.stop();
     this.scene.start(inicio);
+    if (jogador === 1) {
+      socket.emit("fimDaPartida", sala);
+    }
   }
 
+
 };
-function touchbot1(player1, bot1) { if (inventory === 7 && timer > 0 )  endgame === true
+function touchbot1(player1, bot1) {
+  endgame === true
   }
 
 function countdown() {
