@@ -103,7 +103,7 @@ fase1.preload = function () {
 };
 
 fase1.create = function () {
-  socket = io("https://lit-thicket-45529.herokuapp.com/");
+  socket = io("https://polar-forest-42186.herokuapp.com/");
 
   this.add.image(320, 300, "quadra");
   // Trilha sonora

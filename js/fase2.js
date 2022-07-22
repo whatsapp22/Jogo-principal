@@ -121,7 +121,7 @@ fase2.preload = function () {
 fase2.create = function () {
 
   endgame = false;
-  socket = io("https://lit-thicket-45529.herokuapp.com/");
+  socket = io("https://polar-forest-42186.herokuapp.com/");
 
 socket.on("connect", () => {
   sala = 3;
@@ -431,7 +431,7 @@ socket.on("candidate", (candidate) => {
 
 
   // Conectar no servidor via WebSocket
-  socket = io("https://lit-thicket-45529.herokuapp.com/");
+  socket = io("https://polar-forest-42186.herokuapp.com/");
 
   var physics = this.physics;
   var cameras = this.cameras;
