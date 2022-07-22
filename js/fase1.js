@@ -1,5 +1,5 @@
 // Importar a próxima cena
-import { fim } from "./fim.js";
+import { inicio } from "./inicio.js";
 
 // Criar a cena 1
 var fase1 = new Phaser.Scene("Fase 1");
@@ -194,8 +194,8 @@ fase1.create = function () {
   botao.on(
     "pointerdown",
     function () {
-      socket.emit("proxima-fase", "faselincoln", sala);
-      this.scene.start(faselincoln);
+      socket.emit("proxima-fase", "inicio", sala);
+      this.scene.start(inicio);
     },
     this
   );
@@ -229,7 +229,7 @@ fase1.create = function () {
   });
   textt.setVisible(false);
 
-  var skip = "Clique na tela para prosseguir.";
+  var skip = "Clique no texto para prosseguir.";
   textt2 = this.add.text(80, 530, skip, {
     fontSize: "14px",
     fill: "#ffffff",
@@ -669,103 +669,103 @@ fase1.create = function () {
   bombs = this.physics.add.group();
 
   bomb = bombs.create(20, 580, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(510, 225), 80);
   bomb = bombs.create(200, 16, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-312, 713), 80);
   bomb = bombs.create(201, 336, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(420, -342), 80);
   bomb = bombs.create(520, 169, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-610, 343), 80);
   bomb = bombs.create(200, 116, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(530, -210), 80);
   bomb = bombs.create(680, 126, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(340, 440), 80);
   bomb = bombs.create(310, 236, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-420, 300), 80);
   bomb = bombs.create(120, 826, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(520, -310), 80);
   bomb = bombs.create(530, 116, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-220, 410), 80);
   bomb = bombs.create(20, 580, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(510, 225), 80);
   bomb = bombs.create(200, 16, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-652, 713), 80);
   bomb = bombs.create(201, 336, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(454, -542), 80);
   bomb = bombs.create(520, 169, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-617, 373), 80);
   bomb = bombs.create(200, 116, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(230, -230), 80);
   bomb = bombs.create(680, 126, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(240, 440), 80);
   bomb = bombs.create(310, 236, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-420, 400), 80);
   bomb = bombs.create(120, 826, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(620, -310), 80);
   bomb = bombs.create(330, 116, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-220, 410), 80);
   bomb = bombs.create(680, 126, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(240, 440), 80);
   bomb = bombs.create(310, 236, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-420, 400), 80);
   bomb = bombs.create(120, 826, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(620, -310), 80);
   bomb = bombs.create(330, 116, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-220, 410), 80);
   bomb = bombs.create(310, 236, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-420, 400), 80);
   bomb = bombs.create(120, 826, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(620, -310), 80);
   bomb = bombs.create(330, 116, "bomb");
-  bomb.setBounce(0.98);
+  bomb.setBounce(0.97);
   bomb.setCollideWorldBounds(true);
   bomb.setVelocity(Phaser.Math.Between(-220, 410), 80);
 };
@@ -821,6 +821,7 @@ function colbot1(player, bot) {
   player.setVelocityX(0);
   player.setVelocityY(0);
   botao.setVisible(true);
+  trilha.stop;
 }
 
 function hitBomb(player, bomb) {

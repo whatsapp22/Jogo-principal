@@ -1,5 +1,5 @@
 // Importar a próxima cena
-import { fim } from "./fim.js";
+import { inicio } from "./inicio.js";
 
 // Criar a cena 1
 var fase2 = new Phaser.Scene("Fase 2");
