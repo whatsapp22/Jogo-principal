@@ -332,7 +332,7 @@ faselincoln.create = function () {
   }).setScale(0.7);
   newgame = this.add.image(130, 190, "newgame").setInteractive().setScale(0.7);
   next = this.add
-    .image(200, 300, "novonext")
+    .image(100, 300, "novonext")
     .setInteractive()
     .setVisible(false)
     .setScale(0.7);
@@ -480,7 +480,7 @@ faselincoln.create = function () {
         imagembloqueio = game.add
           .image(330, 190, "fundograde")
           .setInteractive().setScale(0.7);
-        suavez = game.add.image(340, 40, "escolha2").setInteractive().setScale(0.7);
+        suavez = game.add.image(330, 35, "escolha2").setInteractive().setScale(0.7);
         suavez.setVisible(true);
       } else if (jogador === 1) {
         suavez = game.add
@@ -1209,7 +1209,7 @@ faselincoln.create = function () {
         imagembloqueio = game.add
           .image(330, 190, "fundograde")
           .setInteractive().setScale(0.7);
-        suavez = game.add.image(340, 40, "escolha2").setInteractive().setScale(0.7);
+        suavez = game.add.image(330, 35, "escolha2").setInteractive().setScale(0.7);
         suavez.setVisible(true);
       } else if (jogador === 2) {
         suavez = game.add
@@ -2175,7 +2175,7 @@ faselincoln.create = function () {
         imagembloqueio = game.add
           .image(330, 190, "fundograde")
           .setInteractive().setScale(0.7);
-        suavez = game.add.image(340, 40, "escolha2").setInteractive().setScale(0.7);
+        suavez = game.add.image(330, 35, "escolha2").setInteractive().setScale(0.7);
         suavez.setVisible(true);
       } else if (jogador === 1) {
         suavez = game.add
@@ -3787,7 +3787,7 @@ faselincoln.create = function () {
         imagembloqueio = game.add
           .image(330, 190, "fundograde")
           .setInteractive().setScale(0.7);
-        suavez = game.add.image(340, 40, "escolha2").setInteractive().setScale(0.7);
+        suavez = game.add.image(330, 35, "escolha2").setInteractive().setScale(0.7);
         suavez.setVisible(true);
       } else if (jogador === 2) {
         suavez = game.add
@@ -7048,7 +7048,7 @@ faselincoln.create = function () {
           .setInteractive()
           .setScale(0.7);
         suavez = game.add
-          .image(340, 40, "escolha2")
+          .image(330, 35, "escolha2")
           .setInteractive()
           .setScale(0.7);
         suavez.setVisible(true);

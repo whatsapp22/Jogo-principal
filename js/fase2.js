@@ -523,7 +523,7 @@ fase2.create = function () {
             .forEach((track) => localConnection.addTrack(track, midias));
           localConnection.onicecandidate = ({ candidate }) => {
             candidate &&
-              socket.emit("candidate", jogadores.primeiro, candidate);
+              socket.emit("candidate", jogadores.primeiro,sala, candidate);
           };
           console.log(midias);
           localConnection.ontrack = ({ streams: [midias] }) => {
@@ -534,7 +534,7 @@ fase2.create = function () {
             .then((offer) => localConnection.setLocalDescription(offer))
             .then(() => {
               socket.emit(
-                "offer",
+                "offer",sala,
                 jogadores.primeiro,
                 localConnection.localDescription
               );
@@ -563,7 +563,7 @@ fase2.create = function () {
       .getTracks()
       .forEach((track) => remoteConnection.addTrack(track, midias));
     remoteConnection.onicecandidate = ({ candidate }) => {
-      candidate && socket.emit("candidate", socketId, candidate);
+      candidate && socket.emit("candidate", socketId,sala,candidate);
     };
     remoteConnection.ontrack = ({ streams: [midias] }) => {
       audio.srcObject = midias;
@@ -573,7 +573,7 @@ fase2.create = function () {
       .then(() => remoteConnection.createAnswer())
       .then((answer) => remoteConnection.setLocalDescription(answer))
       .then(() => {
-        socket.emit("answer", socketId, remoteConnection.localDescription);
+        socket.emit("answer", socketId, sala,remoteConnection.localDescription);
       });
   });
 
@@ -610,7 +610,7 @@ fase2.update = function (time, delta) {
     } catch (e) {
       frame = 0;
     }
-    socket.emit("estadoDoJogador", {
+    socket.emit("estadoDoJogador", sala,{
       frame: frame,
       x: player1.body.x,
       y: player1.body.y,
@@ -623,7 +623,7 @@ fase2.update = function (time, delta) {
     } catch (e) {
       frame = 0;
     }
-    socket.emit("estadoDoJogador", {
+    socket.emit("estadoDoJogador",sala,{
       frame: frame,
       x: player2.body.x,
       y: player2.body.y,
