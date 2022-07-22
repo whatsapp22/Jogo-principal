@@ -34,8 +34,18 @@ var trilha;
 var jogador;
 var socket
 var ice_servers = {
-  iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+  iceServers: [
+    {
+      urls: "stun:ifsc.cloud",
+    },
+    {
+      urls: "turns:ifsc.cloud",
+      username: "etorresini",
+      credential: "matrix",
+    },
+  ],
 };
+var sala;
 var localConnection;
 var remoteConnection;
 var midias;
@@ -109,7 +119,81 @@ fase2.preload = function () {
 fase2.create = function () {
 
   endgame = false;
+socket = io();
 
+socket.on("connect", () => {
+  sala = 3;
+  socket.emit("entrar-na-sala", sala);
+});
+
+socket.on("jogadores", (jogadores) => {
+  if (jogadores.primeiro === socket.id) {
+    jogador = 1;
+
+    navigator.mediaDevices
+      .getUserMedia({ video: false, audio: true })
+      .then((stream) => {
+        midias = stream;
+      })
+      .catch((error) => console.log(error));
+  } else if (jogadores.segundo === socket.id) {
+    jogador = 2;
+
+    navigator.mediaDevices
+      .getUserMedia({ video: false, audio: true })
+      .then((stream) => {
+        midias = stream;
+        localConnection = new RTCPeerConnection(ice_servers);
+        midias
+          .getTracks()
+          .forEach((track) => localConnection.addTrack(track, midias));
+        localConnection.onicecandidate = ({ candidate }) => {
+          candidate && socket.emit("candidate", sala, candidate);
+        };
+        console.log(midias);
+        localConnection.ontrack = ({ streams: [midias] }) => {
+          audio.srcObject = midias;
+        };
+        localConnection
+          .createOffer()
+          .then((offer) => localConnection.setLocalDescription(offer))
+          .then(() => {
+            socket.emit("offer", sala, localConnection.localDescription);
+          });
+      })
+      .catch((error) => console.log(error));
+  }
+  console.log(jogadores);
+});
+
+socket.on("offer", (socketId, description) => {
+  remoteConnection = new RTCPeerConnection(ice_servers);
+  midias
+    .getTracks()
+    .forEach((track) => remoteConnection.addTrack(track, midias));
+  remoteConnection.onicecandidate = ({ candidate }) => {
+    candidate && socket.emit("candidate", sala, candidate);
+  };
+  remoteConnection.ontrack = ({ streams: [midias] }) => {
+    audio.srcObject = midias;
+  };
+  remoteConnection
+    .setRemoteDescription(description)
+    .then(() => remoteConnection.createAnswer())
+    .then((answer) => remoteConnection.setLocalDescription(answer))
+    .then(() => {
+      socket.emit("answer", sala, remoteConnection.localDescription);
+    });
+});
+
+socket.on("answer", (description) => {
+  localConnection.setRemoteDescription(description);
+});
+
+socket.on("candidate", (candidate) => {
+  const conn = localConnection || remoteConnection;
+  conn.addIceCandidate(new RTCIceCandidate(candidate));
+});
   // Trilha sonora
   trilha = this.sound.add("trilha");
   trilha.play();
