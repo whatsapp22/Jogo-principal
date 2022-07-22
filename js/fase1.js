@@ -821,7 +821,7 @@ function colbot1(player, bot) {
   player.setVelocityX(0);
   player.setVelocityY(0);
   botao.setVisible(true);
-  trilha.stop;
+  trilha.stop();
 }
 
 function hitBomb(player, bomb) {
